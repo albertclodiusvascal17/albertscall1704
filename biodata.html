@@ -17,7 +17,6 @@
             --sunset-coral: #ff7b54;
             --sunset-gold: #ffb26b;
             --ocean-blue: #38bdf8;
-            --stage-blue: #2563eb;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --border-glass: rgba(255, 255, 255, 0.1);
@@ -236,7 +235,7 @@
             align-items: stretch;
         }
 
-        /* Kartu Foto Utama (Disesuaikan dengan Foto Potret) */
+        /* Kartu Foto Utama */
         .photo-card {
             position: relative;
             border-radius: 26px;
@@ -251,13 +250,43 @@
             cursor: pointer;
         }
 
+        .photo-placeholder {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 24px;
+            color: var(--text-muted);
+            background: linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.85));
+        }
+
+        .photo-placeholder strong {
+            color: var(--sunset-gold);
+            margin-top: 10px;
+            font-size: 1rem;
+        }
+
+        .photo-placeholder code {
+            margin-top: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 3px 10px;
+            border-radius: 6px;
+            color: var(--ocean-blue);
+            font-size: 0.84rem;
+        }
+
         .photo-card img {
             position: absolute;
             inset: 0;
+            z-index: 1;
             width: 100%;
             height: 100%;
             object-fit: cover;
-            object-position: center 22%; /* Fokus pas ke wajah & mikrofon */
+            object-position: center 22%;
             transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
@@ -274,14 +303,14 @@
                 rgba(6, 9, 19, 0.2) 55%,
                 rgba(6, 9, 19, 0.94) 100%
             );
-            z-index: 1;
+            z-index: 2;
         }
 
         .photo-top-pill {
             position: absolute;
             top: 20px;
             left: 20px;
-            z-index: 2;
+            z-index: 3;
             padding: 7px 14px;
             border-radius: 999px;
             background: rgba(6, 9, 19, 0.72);
@@ -299,7 +328,7 @@
             position: absolute;
             top: 20px;
             right: 20px;
-            z-index: 2;
+            z-index: 3;
             padding: 6px 12px;
             border-radius: 999px;
             background: rgba(6, 9, 19, 0.65);
@@ -317,7 +346,7 @@
 
         .photo-caption {
             position: relative;
-            z-index: 2;
+            z-index: 3;
             padding: 28px;
         }
 
@@ -476,7 +505,7 @@
             border-color: var(--sunset-coral);
         }
 
-        /* ================= SECTION KOST SULTHAN (FOTO & VIDEO) ================= */
+        /* ================= SECTION TEMPAT FOTO KOST (DEPAN, KIRI, KANAN) ================= */
         .kost-section {
             margin-top: 85px;
             padding-top: 60px;
@@ -486,8 +515,8 @@
         .kost-photo-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 22px;
-            margin-bottom: 30px;
+            gap: 24px;
+            margin-bottom: 34px;
         }
 
         .kost-card {
@@ -508,17 +537,73 @@
             box-shadow: 0 20px 45px -12px rgba(255, 123, 84, 0.25);
         }
 
+        /* Bingkai Tempat Foto Kost dengan Tinggi Eksplisit agar Pasti Muncul */
         .kost-img-wrap {
             position: relative;
-            aspect-ratio: 4 / 3;
+            width: 100%;
+            height: 260px;
             overflow: hidden;
-            background: rgba(10, 16, 32, 0.9);
+            background: #0a1020;
+            border-bottom: 1px solid var(--border-glass);
         }
 
+        /* Placeholder apabila file foto belum dimasukkan */
+        .kost-slot-empty {
+            position: absolute;
+            inset: 12px;
+            z-index: 1;
+            border: 2px dashed rgba(255, 178, 107, 0.38);
+            border-radius: 14px;
+            background: radial-gradient(circle at center, rgba(56, 189, 248, 0.08), rgba(6, 9, 19, 0.75));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 18px;
+            gap: 8px;
+        }
+
+        .kost-slot-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 12px;
+            background: rgba(255, 178, 107, 0.14);
+            border: 1px solid rgba(255, 178, 107, 0.3);
+            color: var(--sunset-gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .kost-slot-empty strong {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            color: #f8fafc;
+        }
+
+        .kost-slot-empty span {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        .kost-slot-empty code {
+            font-size: 0.78rem;
+            color: var(--ocean-blue);
+            background: rgba(56, 189, 248, 0.12);
+            padding: 3px 10px;
+            border-radius: 6px;
+        }
+
+        /* Foto Kost Asli (Absolute Full Cover seperti Foto Albert) */
         .kost-img-wrap img {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
             width: 100%;
             height: 100%;
             object-fit: cover;
+            display: block;
             transition: transform 0.6s ease;
         }
 
@@ -530,11 +615,12 @@
             position: absolute;
             top: 14px;
             left: 14px;
+            z-index: 3;
             padding: 5px 12px;
             border-radius: 999px;
-            background: rgba(6, 9, 19, 0.78);
+            background: rgba(6, 9, 19, 0.82);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 178, 107, 0.35);
+            border: 1px solid rgba(255, 178, 107, 0.38);
             color: var(--sunset-gold);
             font-size: 0.76rem;
             font-weight: 700;
@@ -637,14 +723,17 @@
         .video-fallback-note {
             display: none;
             position: absolute;
-            inset: 0;
+            inset: 14px;
+            border: 2px dashed rgba(56, 189, 248, 0.35);
+            border-radius: 14px;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
             padding: 24px;
-            background: rgba(6, 9, 19, 0.9);
+            background: rgba(6, 9, 19, 0.92);
             color: var(--text-muted);
+            gap: 8px;
         }
 
         .video-fallback-note.active {
@@ -653,8 +742,14 @@
 
         .video-fallback-note strong {
             color: var(--sunset-gold);
-            margin-bottom: 6px;
             font-size: 1.05rem;
+        }
+
+        .video-fallback-note code {
+            background: rgba(56, 189, 248, 0.12);
+            color: var(--ocean-blue);
+            padding: 3px 10px;
+            border-radius: 6px;
         }
 
         /* Tombol Navigasi Bawah */
@@ -697,7 +792,7 @@
             background: linear-gradient(135deg, #ffc285, #ff8d6b);
         }
 
-        /* Lightbox Modal (Klik Foto Untuk Zoom) */
+        /* Lightbox Modal */
         .lightbox {
             position: fixed;
             inset: 0;
@@ -883,7 +978,7 @@
     </div>
 
     <main>
-        <!-- BAGIAN 1: BIODATA & FOTO DIRI -->
+        <!-- ==================== BAGIAN 1: BIODATA & FOTO DIRI ==================== -->
         <section>
             <div class="section-header gsap-bio-header">
                 <span class="section-tag">Kenalan dulu</span>
@@ -892,12 +987,17 @@
             </div>
 
             <div class="biodata-grid">
-                <!-- KIRI: FOTO ALBERT -->
-                <div class="photo-card gsap-bio-card" onclick="openLightbox(this.querySelector('img').src, 'Albert Clodius Vascal — Pujian & Pelayanan')">
-                    <!-- Simpan fotomu sebagai foto-albert.jpeg di folder yang sama -->
+                <!-- TEMPAT PELETAKAN FOTO ALBERT -->
+                <div class="photo-card gsap-bio-card" onclick="openLightboxFromCard(this, 'Albert Clodius Vascal — Pujian & Pelayanan')">
+                    <div class="photo-placeholder">
+                        <svg width="42" height="42" fill="none" stroke="#ffb26b" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                        <strong>Tempat Foto Albert</strong>
+                        <code>foto-albert.jpeg</code>
+                    </div>
+
                     <img src="foto-albert.jpeg"
                          alt="Foto Albert Clodius Vascal bernyanyi memimpin pujian di atas panggung"
-                         onerror="setPlaceholder(this, 'Foto Albert', 'Simpan fotomu sebagai: foto-albert.jpeg')">
+                         onerror="tryNextExt(this)">
                     <div class="photo-overlay"></div>
 
                     <div class="photo-top-pill">
@@ -911,7 +1011,7 @@
                     </div>
                 </div>
 
-                <!-- KANAN: DATA BIODATA -->
+                <!-- DATA BIODATA -->
                 <div class="info-panel gsap-bio-card">
                     <div class="info-panel-title">
                         <h2>Biodata</h2>
@@ -1029,36 +1129,57 @@
             </div>
         </section>
 
-        <!-- BAGIAN 2: FOTO & VIDEO KOST SULTHAN -->
+        <!-- ==================== BAGIAN 2: TEMPAT FOTO KOST (DEPAN, KIRI, KANAN) & VIDEO DALAM ==================== -->
         <section class="kost-section" id="kost">
-            <div class="section-header gsap-kost-header">
+            <div class="section-header">
                 <span class="section-tag">Tempat Tinggal • Kost Sulthan</span>
-                <h2>Galeri Foto &amp; <span class="text-gradient">Video Kost</span></h2>
-                <p>Dokumentasi Kost Sulthan dari tampak depan, samping kiri, samping kanan, serta video tampak bagian dalam.</p>
+                <h2>Foto Kost &amp; <span class="text-gradient">Video Tampak Dalam</span></h2>
+                <p>Dokumentasi Kost Sulthan dari sudut tampak depan, tampak kiri, tampak kanan, serta video bagian dalam kost.</p>
             </div>
 
-            <!-- 3 FOTO KOST (DEPAN, KIRI, KANAN) -->
             <div class="kost-photo-grid">
-                <!-- Foto Kost Tampak Depan -->
-                <div class="kost-card gsap-kost-card" onclick="openLightbox(this.querySelector('img').src, 'Kost Sulthan — Tampak Depan')">
+                <!-- ================================================================ -->
+                <!-- TEMPAT PELETAKAN FOTO KOST 1 : TAMPAK DEPAN                      -->
+                <!-- Ganti src="kost-depan.jpg" jika nama file fotomu berbeda         -->
+                <!-- ================================================================ -->
+                <div class="kost-card" onclick="openLightboxFromCard(this, 'Kost Sulthan — Tampak Depan')">
                     <div class="kost-img-wrap">
+                        <div class="kost-slot-empty">
+                            <div class="kost-slot-icon">
+                                <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                            </div>
+                            <strong>Tempat Foto Tampak Depan</strong>
+                            <span>Simpan foto di folder yang sama:</span>
+                            <code>kost-depan.jpg / .jpeg</code>
+                        </div>
                         <img src="kost-depan.jpg"
                              alt="Foto Kost Sulthan Tampak Depan"
-                             onerror="setPlaceholder(this, 'Tampak Depan', 'File: kost-depan.jpg')">
+                             onerror="tryNextExt(this)">
                         <span class="kost-angle-badge">Tampak Depan</span>
                     </div>
                     <div class="kost-card-body">
                         <h3>Kost Sulthan — Tampak Depan</h3>
-                        <p>Pemandangan area depan bangunan dan akses masuk Kost Sulthan.</p>
+                        <p>Tampilan bagian depan bangunan dan akses masuk Kost Sulthan.</p>
                     </div>
                 </div>
 
-                <!-- Foto Kost Tampak Kiri -->
-                <div class="kost-card gsap-kost-card" onclick="openLightbox(this.querySelector('img').src, 'Kost Sulthan — Tampak Kiri')">
+                <!-- ================================================================ -->
+                <!-- TEMPAT PELETAKAN FOTO KOST 2 : TAMPAK KIRI                       -->
+                <!-- Ganti src="kost-kiri.jpg" jika nama file fotomu berbeda          -->
+                <!-- ================================================================ -->
+                <div class="kost-card" onclick="openLightboxFromCard(this, 'Kost Sulthan — Tampak Kiri')">
                     <div class="kost-img-wrap">
+                        <div class="kost-slot-empty">
+                            <div class="kost-slot-icon">
+                                <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                            </div>
+                            <strong>Tempat Foto Tampak Kiri</strong>
+                            <span>Simpan foto di folder yang sama:</span>
+                            <code>kost-kiri.jpg / .jpeg</code>
+                        </div>
                         <img src="kost-kiri.jpg"
                              alt="Foto Kost Sulthan Tampak Kiri"
-                             onerror="setPlaceholder(this, 'Tampak Kiri', 'File: kost-kiri.jpg')">
+                             onerror="tryNextExt(this)">
                         <span class="kost-angle-badge">Tampak Kiri</span>
                     </div>
                     <div class="kost-card-body">
@@ -1067,12 +1188,23 @@
                     </div>
                 </div>
 
-                <!-- Foto Kost Tampak Kanan -->
-                <div class="kost-card gsap-kost-card" onclick="openLightbox(this.querySelector('img').src, 'Kost Sulthan — Tampak Kanan')">
+                <!-- ================================================================ -->
+                <!-- TEMPAT PELETAKAN FOTO KOST 3 : TAMPAK KANAN                      -->
+                <!-- Ganti src="kost-kanan.jpg" jika nama file fotomu berbeda         -->
+                <!-- ================================================================ -->
+                <div class="kost-card" onclick="openLightboxFromCard(this, 'Kost Sulthan — Tampak Kanan')">
                     <div class="kost-img-wrap">
+                        <div class="kost-slot-empty">
+                            <div class="kost-slot-icon">
+                                <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                            </div>
+                            <strong>Tempat Foto Tampak Kanan</strong>
+                            <span>Simpan foto di folder yang sama:</span>
+                            <code>kost-kanan.jpg / .jpeg</code>
+                        </div>
                         <img src="kost-kanan.jpg"
                              alt="Foto Kost Sulthan Tampak Kanan"
-                             onerror="setPlaceholder(this, 'Tampak Kanan', 'File: kost-kanan.jpg')">
+                             onerror="tryNextExt(this)">
                         <span class="kost-angle-badge">Tampak Kanan</span>
                     </div>
                     <div class="kost-card-body">
@@ -1082,8 +1214,10 @@
                 </div>
             </div>
 
-            <!-- VIDEO TAMPAK DALAM KOST -->
-            <div class="video-showcase gsap-kost-video">
+            <!-- ================================================================ -->
+            <!-- TEMPAT PELETAKAN VIDEO : TAMPAK DALAM KOST                       -->
+            <!-- ================================================================ -->
+            <div class="video-showcase">
                 <div class="video-header">
                     <div class="video-header-left">
                         <div class="video-icon-box">
@@ -1099,19 +1233,19 @@
 
                 <div class="video-frame">
                     <video id="kostVideo" controls playsinline preload="metadata">
-                        <!-- Simpan video tampak dalam sebagai video-kost-dalam.mp4 di folder yang sama -->
                         <source src="video-kost-dalam.mp4" type="video/mp4">
                         Browser Anda tidak mendukung pemutar video HTML5.
                     </video>
                     <div id="videoFallback" class="video-fallback-note">
-                        <strong>Video Tampak Dalam Kost Belum Ditemukan</strong>
-                        <span>Letakkan file video kamu di folder yang sama dengan nama <code>video-kost-dalam.mp4</code></span>
+                        <strong>Tempat Video Tampak Dalam Kost</strong>
+                        <span>Simpan file video kamu di folder yang sama dengan nama:</span>
+                        <code>video-kost-dalam.mp4</code>
                     </div>
                 </div>
             </div>
         </section>
 
-        <div class="bottom-actions gsap-actions">
+        <div class="bottom-actions">
             <a href="index.html" class="btn">← Kembali ke Home</a>
             <a href="tugas1.html" class="btn btn-primary">Lihat Tugas 1 →</a>
         </div>
@@ -1133,29 +1267,30 @@
         <p>&copy; 2026 <span>Albert Clodius Vascal</span>. Tugas Sistem Informasi Manajemen Perikanan.</p>
     </footer>
 
-    <!-- GSAP & ScrollTrigger CDN -->
+    <!-- GSAP CDN -->
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
     <script>
-        // Placeholder SVG rapi jika file gambar lokal belum ditambahkan
-        function setPlaceholder(img, title, subtitle) {
-            img.onerror = null;
-            const svg = `
-                <svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
-                    <defs>
-                        <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-                            <stop offset="0%" stop-color="#0f172a"/>
-                            <stop offset="100%" stop-color="#1e293b"/>
-                        </linearGradient>
-                    </defs>
-                    <rect width="800" height="600" fill="url(#g)"/>
-                    <circle cx="400" cy="240" r="46" fill="none" stroke="#ffb26b" stroke-width="3"/>
-                    <path d="M375 245 l18 -18 l14 14 l18 -22 l20 26 z" fill="#38bdf8"/>
-                    <text x="400" y="330" text-anchor="middle" fill="#f8fafc" font-family="sans-serif" font-size="26" font-weight="bold">${title}</text>
-                    <text x="400" y="370" text-anchor="middle" fill="#94a3b8" font-family="sans-serif" font-size="18">${subtitle}</text>
-                </svg>
-            `;
-            img.src = "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
+        // Coba ekstensi gambar lain secara otomatis (.jpg, .jpeg, .png, .webp, .JPG, .JPEG, .PNG)
+        function tryNextExt(img) {
+            const exts = [".jpg", ".jpeg", ".png", ".webp", ".JPG", ".JPEG", ".PNG"];
+            let base = img.dataset.base;
+            if (!base) {
+                const currentSrc = img.getAttribute("src") || "";
+                const dotIndex = currentSrc.lastIndexOf(".");
+                base = dotIndex !== -1 ? currentSrc.substring(0, dotIndex) : currentSrc;
+                img.dataset.base = base;
+                const currentExt = dotIndex !== -1 ? currentSrc.substring(dotIndex) : "";
+                img.dataset.tried = currentExt;
+            }
+            const tried = (img.dataset.tried || "").split(",");
+            const nextExt = exts.find(ext => !tried.includes(ext));
+            if (nextExt) {
+                tried.push(nextExt);
+                img.dataset.tried = tried.join(",");
+                img.src = base + nextExt;
+            } else {
+                img.style.display = "none";
+            }
         }
 
         // Cek jika file video belum ada di folder
@@ -1166,22 +1301,32 @@
             });
         }
 
+        // Notifikasi Toast
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+            toast.textContent = message;
+            toast.classList.add("show");
+            setTimeout(() => {
+                toast.classList.remove("show");
+            }, 2200);
+        }
+
         // Salin teks ke clipboard
         function copyText(text, message) {
             navigator.clipboard.writeText(text).then(() => {
-                const toast = document.getElementById("toast");
-                toast.textContent = message;
-                toast.classList.add("show");
-                setTimeout(() => {
-                    toast.classList.remove("show");
-                }, 2200);
+                showToast(message);
             });
         }
 
-        // Lightbox Foto
-        function openLightbox(src, caption) {
+        // Buka Lightbox hanya jika gambar sudah berhasil dimuat
+        function openLightboxFromCard(card, caption) {
+            const img = card.querySelector("img");
+            if (!img || img.style.display === "none" || !img.complete || img.naturalWidth === 0) {
+                showToast("File foto belum ditemukan di folder");
+                return;
+            }
             const lb = document.getElementById("lightbox");
-            document.getElementById("lightboxImg").src = src;
+            document.getElementById("lightboxImg").src = img.src;
             document.getElementById("lightboxCaption").textContent = caption;
             lb.classList.add("open");
         }
@@ -1198,29 +1343,12 @@
             }
         });
 
-        // Animasi GSAP
+        // Animasi GSAP Halus (tanpa menyembunyikan elemen kost)
         if (typeof gsap !== "undefined") {
-            gsap.registerPlugin(ScrollTrigger);
-
             const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-            tl.from(".gsap-header", { y: -50, opacity: 0, duration: 0.7 })
-              .from(".gsap-bio-header", { y: 30, opacity: 0, duration: 0.75 }, "-=0.35")
-              .from(".gsap-bio-card", { y: 35, opacity: 0, duration: 0.8, stagger: 0.16 }, "-=0.45");
-
-            gsap.from(".gsap-kost-header", {
-                scrollTrigger: { trigger: "#kost", start: "top 82%" },
-                y: 30, opacity: 0, duration: 0.7, ease: "power3.out"
-            });
-
-            gsap.from(".gsap-kost-card", {
-                scrollTrigger: { trigger: ".kost-photo-grid", start: "top 82%" },
-                y: 35, opacity: 0, duration: 0.75, stagger: 0.14, ease: "power3.out"
-            });
-
-            gsap.from(".gsap-kost-video", {
-                scrollTrigger: { trigger: ".video-showcase", start: "top 85%" },
-                y: 35, opacity: 0, duration: 0.8, ease: "power3.out"
-            });
+            tl.from(".gsap-header", { y: -40, opacity: 0, duration: 0.65 })
+              .from(".gsap-bio-header", { y: 25, opacity: 0, duration: 0.7 }, "-=0.35")
+              .from(".gsap-bio-card", { y: 30, opacity: 0, duration: 0.75, stagger: 0.15 }, "-=0.45");
         }
     </script>
 </body>
