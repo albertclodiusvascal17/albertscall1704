@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tugas 4 — Sistem Keuangan POKLAHSAR | Albert Clodius Vascal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --navy:#091e42;--biru-gelap:#0f3460;--biru:#1d5fd6;--biru-cerah:#3b82f6;--cyan:#0ea5e9;
+  --es:#f3f8ff;--es-2:#e6f0ff;--putih:#fff;--garis:#d6e4f7;--teks:#10233e;--redam:#5a7191;
+  --sukses-bg:#e7f8ef;--sukses-teks:#0f7a44;--bahaya-bg:#ffe8ee;--bahaya-teks:#be123c;
+  --kuning-bg:#fef3c7;--kuning-teks:#b45309;
+  --bayangan:0 10px 28px -10px rgba(15,52,96,.12);--radius:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;
+  background:radial-gradient(circle at 10% 0%,#dcebff 0%,transparent 40%),var(--es);
+  color:var(--teks);line-height:1.6;min-height:100vh;
+}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+.mono{font-family:'JetBrains Mono',monospace;font-weight:700}
+
+/* Top Navbar */
+.topbar{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--garis)}
+.topbar-in{max-width:1280px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.brand-logo{width:40px;height:40px;border-radius:11px;flex-shrink:0;background:linear-gradient(135deg,var(--biru-gelap),var(--biru-cerah));color:#fff;display:grid;place-items:center;font-weight:800;font-size:13px}
+.brand-title{font-weight:800;font-size:14.5px;color:var(--navy);white-space:nowrap}
+.brand-sub{font-size:11.5px;color:var(--redam);white-space:nowrap}
+.nav-pills{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.nav-link{padding:8px 13px;border-radius:999px;font-size:13px;font-weight:700;color:var(--redam);transition:.2s}
+.nav-link:hover{background:var(--es-2);color:var(--biru)}
+.nav-link[aria-current="page"]{background:linear-gradient(135deg,var(--biru),var(--biru-cerah));color:#fff}
+
+.nav-right{display:flex;align-items:center;gap:8px}
+.dropdown{position:relative}
+.drop-btn{padding:8px 13px;border-radius:10px;font-size:12.5px;font-weight:700;background:var(--es-2);color:var(--biru-gelap);border:1px solid var(--garis)}
+.drop-menu{position:absolute;right:0;top:calc(100% + 8px);width:230px;background:#fff;border:1px solid var(--garis);border-radius:12px;padding:8px;box-shadow:var(--bayangan);display:none;z-index:60}
+.dropdown.open .drop-menu{display:block}
+.drop-menu a{display:flex;justify-content:space-between;padding:8px 12px;border-radius:8px;font-size:13px;font-weight:600}
+.drop-menu a:hover{background:var(--es);color:var(--biru)}
+.burger{display:none;width:40px;height:40px;border-radius:10px;border:1px solid var(--garis);background:#fff;font-size:18px}
+.mobile-drawer{display:none;background:#fff;border-top:1px solid var(--garis);padding:12px 20px}
+.mobile-drawer.open{display:block}
+.mobile-drawer a{display:block;padding:9px 12px;border-radius:8px;font-size:13.5px;font-weight:600;margin-bottom:4px}
+.mobile-drawer a[aria-current="page"]{background:var(--biru);color:#fff}
+
+/* Layout & Hero */
+.wrap{max-width:1280px;margin:0 auto;padding:24px 20px 56px}
+.hero{background:linear-gradient(125deg,var(--navy) 0%,var(--biru-gelap) 48%,var(--biru) 100%);color:#fff;border-radius:20px;padding:30px clamp(18px,4vw,38px);margin-bottom:24px;box-shadow:0 18px 40px -16px rgba(15,52,96,.42)}
+.hero-grid{display:grid;grid-template-columns:1.4fr .9fr;gap:22px;align-items:center}
+.hero-chip{display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);padding:4px 12px;border-radius:999px;font-size:12px;font-weight:600;color:#dbeafe;margin-bottom:12px}
+.hero h1{font-size:clamp(22px,3vw,33px);font-weight:800;line-height:1.2;margin-bottom:8px}
+.hero p{color:#d0e2ff;font-size:14.5px;margin-bottom:18px}
+.hero-actions{display:flex;flex-wrap:wrap;gap:10px}
+.hero-id{background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.22);border-radius:14px;padding:18px}
+.hero-id small{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#93c5fd;font-weight:700}
+.hero-id h2{font-size:17.5px;font-weight:800;margin:4px 0 12px}
+.hero-id-row{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-top:1px solid rgba(255,255,255,.15);color:#dbeafe}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 16px;border-radius:10px;font-size:13.5px;font-weight:700;border:1.5px solid transparent;transition:.2s}
+.btn-cyan{background:var(--cyan);color:#06213e}
+.btn-glass{background:rgba(255,255,255,.14);color:#fff;border-color:rgba(255,255,255,.28)}
+.btn-primary{background:linear-gradient(135deg,var(--biru),var(--biru-cerah));color:#fff}
+.btn-sky{background:linear-gradient(135deg,#0284c7,#0ea5e9);color:#fff}
+.btn-outline{background:#fff;color:var(--biru-gelap);border-color:var(--garis)}
+.btn-outline:hover{background:var(--es-2)}
+
+.sec-head{margin:26px 0 14px;display:flex;justify-content:space-between;align-items:end;flex-wrap:wrap;gap:10px}
+.sec-head h2{font-size:19px;font-weight:800;color:var(--navy)}
+.sec-head p{font-size:13px;color:var(--redam)}
+
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:15px;margin-bottom:24px}
+.kpi{background:#fff;border:1px solid var(--garis);border-radius:14px;padding:16px 18px;box-shadow:var(--bayangan);border-left:4px solid var(--biru)}
+.kpi.cyan{border-left-color:var(--cyan)}
+.kpi.navy{border-left-color:var(--biru-gelap)}
+.kpi.amber{border-left-color:#f59e0b}
+.kpi small{display:block;font-size:11.5px;font-weight:700;color:var(--redam);text-transform:uppercase;margin-bottom:5px}
+.kpi strong{display:block;font-size:20px;font-weight:800;color:var(--navy);margin-bottom:3px}
+.kpi span{font-size:12px;color:var(--redam)}
+
+.mod-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
+.mod-card{background:#fff;border:1px solid var(--garis);border-radius:var(--radius);padding:20px;box-shadow:var(--bayangan);display:flex;flex-direction:column;justify-content:space-between;gap:14px}
+.mod-tag{font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;background:var(--sukses-bg);color:var(--sukses-teks);border:1px solid #a7f3d0}
+.mod-card h3{font-size:17px;font-weight:800;color:var(--navy);margin:10px 0 6px}
+.mod-card p{font-size:13.5px;color:var(--redam)}
+.mod-foot{padding-top:12px;border-top:1px solid var(--es-2);display:flex;justify-content:space-between;font-size:13px;font-weight:700;color:var(--biru)}
+
+.groups-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;padding:18px}
+.group-card{background:#f8fbff;border:1.5px solid var(--garis);border-radius:14px;padding:15px;cursor:pointer;transition:.2s}
+.group-card:hover{border-color:var(--biru);background:#fff;transform:translateY(-2px)}
+.group-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-weight:800;color:var(--navy)}
+.group-row{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:4px;color:var(--redam)}
+.group-row strong{color:var(--teks)}
+.group-tot{margin-top:8px;padding-top:8px;border-top:1px dashed #bfd4f2;display:flex;justify-content:space-between;font-size:13px;font-weight:800;color:var(--biru)}
+
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.step{background:#fff;border:1px solid var(--garis);border-radius:14px;padding:16px}
+.step-num{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:8px;background:var(--biru);color:#fff;font-size:12px;font-weight:800;margin-bottom:8px}
+.step h4{font-size:14px;font-weight:800;color:var(--navy);margin-bottom:4px}
+.step p{font-size:12.5px;color:var(--redam)}
+
+.mod-banner{background:linear-gradient(135deg,#fff 0%,#eaf2ff 100%);border:1px solid var(--garis);border-radius:18px;padding:24px;margin-bottom:20px;box-shadow:var(--bayangan)}
+.mod-banner h1{font-size:clamp(22px,3vw,28px);font-weight:800;color:var(--navy);margin:6px 0}
+.mod-banner p{color:var(--redam);font-size:14px;margin-bottom:16px;max-width:74ch}
+.aksi{display:flex;flex-wrap:wrap;gap:10px}
+
+.view-tabs{display:inline-flex;flex-wrap:wrap;gap:6px;background:#fff;border:1px solid var(--garis);padding:6px;border-radius:12px;margin-bottom:20px}
+.vtab{padding:8px 14px;border-radius:9px;border:0;background:transparent;font-size:13px;font-weight:700;color:var(--redam)}
+.vtab.active{background:var(--biru);color:#fff}
+
+.charts-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:16px;margin-bottom:20px}
+.chart-box{position:relative;height:280px;padding:16px}
+
+.panel{background:#fff;border:1px solid var(--garis);border-radius:var(--radius);overflow:hidden;box-shadow:var(--bayangan);margin-bottom:20px}
+.panel.hidden{display:none}
+.panel-head{padding:14px 18px;background:linear-gradient(90deg,#f8fbff,#eef5ff);border-bottom:1px solid var(--garis);display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}
+.panel-head h3{font-size:15px;font-weight:800;color:var(--navy)}
+.panel-badge{font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:999px;background:#dbeafe;color:var(--biru-gelap)}
+
+.sub-tabs{display:flex;flex-wrap:wrap;gap:8px;padding:14px 18px;border-bottom:1px solid var(--garis);background:#fafcff}
+.stab{padding:7px 14px;border-radius:9px;border:1px solid var(--garis);background:#fff;font-size:13px;font-weight:700;color:var(--redam)}
+.stab.active{background:var(--biru);color:#fff;border-color:var(--biru)}
+
+.frame-box{width:100%;background:#fff}
+.frame-box iframe{display:block;width:100%;height:100%;border:0}
+
+.table-tools{padding:12px 18px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid var(--garis);background:#fcfdff}
+.search-input,.filter-select{padding:8px 12px;border-radius:9px;border:1px solid var(--garis);font-size:13px;background:var(--es);color:var(--teks)}
+.search-input{min-width:220px}
+.tbl-scroll{overflow-x:auto;max-height:460px}
+table{width:100%;border-collapse:collapse;font-size:13px;text-align:left}
+th,td{padding:10px 13px;border-bottom:1px solid #e6effa;vertical-align:middle;white-space:nowrap}
+th{position:sticky;top:0;background:#f1f7ff;color:var(--biru-gelap);font-weight:700;font-size:11.5px;text-transform:uppercase;z-index:2}
+tbody tr:hover{background:#f8fbff}
+
+.code-pill{display:inline-block;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:700;background:#e6f0ff;color:var(--biru);border:1px solid #c7ddff;font-family:'JetBrains Mono',monospace}
+.pill{display:inline-block;padding:3px 9px;border-radius:999px;font-size:11.5px;font-weight:700}
+.pill.green{background:var(--sukses-bg);color:var(--sukses-teks)}
+.pill.red{background:var(--bahaya-bg);color:var(--bahaya-teks)}
+.pill.blue{background:var(--es-2);color:var(--biru)}
+.pill.amber{background:var(--kuning-bg);color:var(--kuning-teks)}
+
+.pieces-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;padding:18px}
+.pieces-card{padding:14px;border-radius:12px;background:#f8fbff;border:1px solid var(--garis)}
+.track{height:8px;background:#dce8fa;border-radius:999px;overflow:hidden;margin:8px 0}
+.fill{height:100%;background:linear-gradient(90deg,var(--biru),var(--cyan))}
+.insight{margin:16px 18px 0;padding:14px 16px;border-radius:12px;background:linear-gradient(135deg,#eff6ff,#e0f2fe);border:1px solid #93c5fd;font-size:13.5px}
+
+/* Modal Angsuran */
+.modal-backdrop{position:fixed;inset:0;background:rgba(9,30,66,.58);display:none;place-items:center;z-index:120;padding:18px}
+.modal-backdrop.open{display:grid}
+.modal{background:#fff;border-radius:18px;max-width:600px;width:100%;padding:22px;box-shadow:0 24px 48px rgba(0,0,0,.25)}
+.modal-head{display:flex;justify-content:space-between;align-items:center;padding-bottom:12px;border-bottom:1px solid var(--garis);margin-bottom:14px}
+.angsuran-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.angsuran-item{border:1px solid var(--garis);border-radius:10px;padding:10px;background:#f8fbff;font-size:12px}
+.angsuran-item strong{display:block;color:var(--navy);margin-top:3px;font-size:13px}
+
+.footer{margin-top:30px;padding-top:18px;border-top:1px solid var(--garis);display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;font-size:12.5px;color:var(--redam)}
+
+@media(max-width:960px){.hero-grid,.mod-grid,.charts-grid{grid-template-columns:1fr}.steps{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:760px){.nav-pills,.dropdown{display:none}.burger{display:grid}.steps{grid-template-columns:1fr}.search-input{width:100%}.aksi .btn{width:100%}.angsuran-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <a href="#beranda" class="brand">
+      <div class="brand-logo">ACV</div>
+      <div>
+        <div class="brand-title">Sistem Keuangan POKLAHSAR</div>
+        <div class="brand-sub">2410715310010 • Albert Clodius Vascal</div>
+      </div>
+    </a>
+    <nav class="nav-pills" id="navPills"></nav>
+    <div class="nav-right">
+      <div class="dropdown" id="webDropdown">
+        <button type="button" class="drop-btn" id="dropBtn">Website Utama &#9662;</button>
+        <div class="drop-menu" id="dropMenu"></div>
+      </div>
+      <button type="button" class="burger" id="burgerBtn">&#9776;</button>
+    </div>
+  </div>
+  <div class="mobile-drawer" id="mobileDrawer"></div>
+</header>
+
+<main class="wrap" id="app"></main>
+
+<div class="modal-backdrop" id="angsuranModal" onclick="if(event.target===this) closeModal()">
+  <div class="modal">
+    <div class="modal-head">
+      <div><h3 id="modalTitle" style="color:var(--navy);font-size:17px">Detail Angsuran</h3><small id="modalSub" style="color:var(--redam)"></small></div>
+      <button type="button" onclick="closeModal()" class="btn btn-outline" style="padding:6px 12px">&#10005;</button>
+    </div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+const CONFIG = {
+  nama: "ALBERT CLODIUS VASCAL",
+  nim: "2410715310010",
+  regulasi: "PERKA BRSDM Nomor 4/PER-BRSDM/2019",
+  menuUtama: [
+    { label: "Home Utama", url: "index.html" },
+    { label: "Biodata", url: "biodata.html" },
+    { label: "Tugas 1 (Google Form)", url: "tugas1.html" },
+    { label: "Tugas 2 (Looker Studio)", url: "tugas2.html" },
+    { label: "Tugas 3 (Looker Studio)", url: "tugas3.html" }
+  ],
+  links: {
+    kas: {
+      formUrl: "https://docs.google.com/forms/d/e/1FAIpQLSegasG6h3LExYnUOuPozVsWetXSN8ZiBta7zL6iS1uEuM6MIQ/viewform?usp=dialog",
+      formEmbed: "https://docs.google.com/forms/d/e/1FAIpQLSegasG6h3LExYnUOuPozVsWetXSN8ZiBta7zL6iS1uEuM6MIQ/viewform?embedded=true",
+      sheetUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQeAeetox3QIEQFkqebNiLmL1ahfmXm49ytHyhn2QXIGjrxH6yiRE9E1gO-Nf_irE7eWw8_NUYhWRAF/pubhtml",
+      sheetEmbed: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQeAeetox3QIEQFkqebNiLmL1ahfmXm49ytHyhn2QXIGjrxH6yiRE9E1gO-Nf_irE7eWw8_NUYhWRAF/pubhtml?widget=true&headers=false",
+      sheetCsv: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQeAeetox3QIEQFkqebNiLmL1ahfmXm49ytHyhn2QXIGjrxH6yiRE9E1gO-Nf_irE7eWw8_NUYhWRAF/pub?output=csv",
+      formKep: "https://docs.google.com/forms/d/e/1FAIpQLSdkVuMbjz0CYkr81AMba2KqbSrJnYfJ5jMpozc2Xq0jxTLIhw/viewform?usp=dialog",
+      sheetKepEmbed: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQiiFM0nbnSETvpTRjgb-QkcxOaGqx2E_pAUwhp1auCGO7Zs8027gGkRHFBCLgER5WVNmu26J59V0u4/pubhtml?widget=true&headers=false",
+      sheetKepCsv: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQiiFM0nbnSETvpTRjgb-QkcxOaGqx2E_pAUwhp1auCGO7Zs8027gGkRHFBCLgER5WVNmu26J59V0u4/pub?output=csv",
+      looker1: "https://datastudio.google.com/embed/reporting/abce968d-62f6-4ae9-a92c-b11c10507c9d/page/page_12345",
+      looker2: "https://lookerstudio.google.com/embed/reporting/3deac225-1899-4f0c-8032-82af684796a6/page/page_12345?embed=true"
+    },
+    iuran: {
+      formUrl: "https://docs.google.com/forms/d/e/1FAIpQLSfajATHnjxz7tPTuEDh0Pul1mtGLlfzI_yPOhvHlsxALnlC2g/viewform?usp=publish-edito",
+      formEmbed: "https://docs.google.com/forms/d/e/1FAIpQLSfajATHnjxz7tPTuEDh0Pul1mtGLlfzI_yPOhvHlsxALnlC2g/viewform?embedded=true",
+      sheetUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQiV3P8Vv_Z2paaTtGa2eN36jjHko7_nP5Oxkr6iyCVogE1AWITcvb294E-8gCs-NSeumjQId3qtiMR/pubhtml?widget=true&headers=false",
+      formKep: "https://forms.gle/6MmehWU3XesuG2np6",
+      looker1: "https://datastudio.google.com/embed/reporting/afc00e64-f3e1-4bbe-a10b-556e69065fe7/page/page_12345",
+      looker2: "https://datastudio.google.com/embed/reporting/c1d5297c-0a0b-4634-aabf-750a80188cd4/page/page_12345"
+    },
+    pinjam: {
+      formUrl: "https://docs.google.com/forms/d/e/1FAIpQLSemthmPu9vMcx0bDufjlWMATY37BdpSE8vWHKsghZ_yBZoezw/viewform?usp=sharing&ouid=107535441330577523591",
+      formEmbed: "https://docs.google.com/forms/d/e/1FAIpQLSemthmPu9vMcx0bDufjlWMATY37BdpSE8vWHKsghZ_yBZoezw/viewform?embedded=true",
+      sheetUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRfNoSYEWVbX6mXJlm3covwT3ywYnJgxbvYENXFjBVm_akodrkOHJZI2rzJWHtqBIa7otlCpLHulgxc/pubhtml?widget=true&headers=false",
+      formKep: "https://forms.gle/jDrarFrtbcEn9kAc9",
+      looker1: "https://datastudio.google.com/embed/reporting/9d293b04-3ec4-4264-81f3-e8822487448a/page/page_12345",
+      looker2: "https://datastudio.google.com/embed/reporting/e98456ca-4418-4023-a552-65bccc12337a/page/page_12345"
+    }
+  },
+  halaman: [
+    { id: "beranda", nav: "Beranda", judul: "Dashboard Keuangan POKLAHSAR", desc: "Portal Sistem Informasi Administrasi Keuangan POKLAHSAR terintegrasi: Kas Kelompok, Iuran Kelompok, Simpan Pinjam Kelompok, dan Monitoring Evaluasi PIECES." },
+    { id: "kas-kelompok", nav: "Kas Kelompok", judul: "1. Kas Kelompok & Evaluasi PIECES", desc: "Pencatatan arus kas masuk/keluar operasional kelompok, sinkronisasi Google Form & Spreadsheet Live, grafik, Looker Studio, serta analisis 6 dimensi PIECES." },
+    { id: "iuran-kelompok", nav: "Iuran Kelompok", judul: "2. Iuran & Tabungan Kelompok", desc: "Pengelolaan tabungan anggota, iuran wajib (Rp 35.000), iuran sukarela per kelompok POKLAHSAR, grafik komposisi dana, dan evaluasi 12 indikator kepuasan." },
+    { id: "simpan-pinjam", nav: "Simpan Pinjam", judul: "3. Simpan Pinjam Anggota", desc: "Portal penyaluran pinjaman anggota, pemantauan rincian angsuran (1–12 bulan), Google Spreadsheet Live, Looker Studio, dan analisis kepuasan PIECES." }
+  ]
+};
+
+const GROUP_META = {
+  "rah12ad": { name: "Bunga Merah", icon: "🌺", test: false },
+  "di 19S":  { name: "Srikandi", icon: "🐟", test: false },
+  "eki18wo": { name: "Sumber Rejeki", icon: "🌊", test: false },
+  "roh16h":  { name: "Waroh", icon: "⭐", test: false },
+  "11001":   { name: "Aman (Uji Coba)", icon: "🧪", test: true },
+  "02-01":   { name: "Budi (Uji Coba)", icon: "🧪", test: true }
+};
+
+/* ================= DATA KAS & KEPUASAN KAS ================= */
+const FALLBACK_KAS_CSV = `Timestamp,Token Kelompok,Token anggota,Nama,Jabatan,Tanggal Transaksi,Jenis Transaksi,Jumlah,Nominal (Rp),Column 9,Keterangan,Bukti Transaksi
+14/06/2026 18:18:20,eki18wo,Wiwi-04,Wiwin sunartini,Sekretaris,01/05/2026,Kas Masuk,1,50000,,Iuran anggota bulan mei,https://drive.google.com/open?id=1lje7nGlY9ClIPItyVkp2uNr8MyTO-RcH
+14/06/2026 18:21:32,eki18wo,Semi-48,Semiati,Anggota,08/05/2026,Kas Keluar,1,30000,,Pembelian alat tulis kelompok,https://drive.google.com/open?id=13PyCERvs979ZlURC8A10ppO3CXb4W8hh
+14/06/2026 18:24:18,eki18wo,Wart-39,Warti A,Anggota,12/05/2026,Kas Masuk,7,75000,,Hasil penjualan produk olahan,https://drive.google.com/open?id=1Ypd3ooTFTFqOLzQdj0rT3mRaZMh86KKd
+14/06/2026 18:27:48,roh16h,Sury-33,Suryati,Sekretaris,06/05/2026,Kas Masuk,1,50000,,Iuran anggota bulan mei,https://drive.google.com/open?id=1vo9jphVizqV3PKvTAsgXuW8R61ryAIDb
+14/06/2026 18:29:53,roh16h,Fatm-51,Fatmawati,Anggota,10/05/2026,Kas Keluar,1,60000,,Pembelian bahan baku produk,https://drive.google.com/open?id=1MTkpFwVGhy8waVo_0INu7N09xc4uPMAR
+14/06/2026 18:32:03,roh16h,Saer-32,Saeraah,Anggota,15/05/2026,Kas Masuk,5,100000,,Hasil penjualan produk,https://drive.google.com/open?id=1bwqRSId2eSco9CQQGQAzUe5wjS6IV3fI
+14/06/2026 18:42:18,di 19S,Yant-17,Yanti,Sekretaris,07/05/2026,Kas Masuk,1,50000,,Iuran anggota,https://drive.google.com/open?id=1SNxGOZ1z8NVne5YVVcpAdzDKbTCbPRLH
+14/06/2026 18:50:20,di 19S,Juli-30,Juliasih,Anggota,14/05/2026,Kas Keluar,1,25000,,Biaya transportasi kegiatan,https://drive.google.com/open?id=1JccI0r0jsy8xRKi-QBV2lbktoY2Als0T
+14/06/2026 18:53:14,rah12ad,jumr-25,Jumriyah,Anggota,21/05/2026,Kas Masuk,1,60000,,Iuran anggota,https://drive.google.com/open?id=1l0lN1bsSOEnxXryajgiEHsbNjNfi3KWy
+14/06/2026 18:55:03,rah12ad,Amin-20,Amina,Anggota,16/05/2026,Kas Keluar,1,63000,,Pembelian perlengkapan,https://drive.google.com/open?id=1jGOo2E67H5hR01yu718-CAVZyflYzmtv
+18/06/2026 12:25:48,eki18wo,Jira-53,Jirah,Anggota,12/05/2026,Kas Keluar,1,50000,,Biaya transportasi,https://drive.google.com/open?id=1u8DslUt-7PWDXzbyNbMhz-JMuky5Zpxc
+25/06/2026 10:15:30,11001,Aman-46,Aman 01,Ketua kelompok,08/06/2026,Kas Masuk,4,100000,,Hasil penjualan produk,https://drive.google.com/open?id=12_6Ygff6PHyAgzQ0cFFif4FwxCgUdVDQ
+25/06/2026 10:18:14,02-01,Budi-41,Budi 01,Sekretaris,25/06/2026,Kas Keluar,1,50000,,Biaya transportasi,https://drive.google.com/open?id=1Hb53EnfQEEVpx3f1yL5MT9DlEIF_x0Ud
+25/06/2026 10:35:20,02-01,Budi-34,Budi 02,Anggota,25/06/2026,Kas Keluar,1,25000,,Biaya transportasi,https://drive.google.com/open?id=1xsv87iGXrPZoAVBdj81s1tAenfKiG-0f
+25/06/2026 10:41:08,11001,Aman-24,Aman 02,Anggota,01/06/2026,Kas Masuk,1,50000,,Bayar iuran kelompok,https://drive.google.com/open?id=1SFrbThDjxUEnZAOa6McVKrqTuIbr8xjS`;
+
+const FALLBACK_KEP_KAS_CSV = `Timestamp,Nama,"Seberapa puas Anda terhadap kecepatan pengurus dalam mencatat transaksi kas kelompok?","Seberapa puas Anda terhadap ketepatan waktu penyampaian laporan kas kepada anggota kelompok?","Seberapa puas Anda terhadap kejelasan informasi mengenai pemasukan dan pengeluaran kas kelompok?","Seberapa puas Anda terhadap kemudahan memperoleh informasi saldo kas kelompok saat dibutuhkan?","Seberapa puas Anda terhadap pengelolaan dana kas kelompok sehingga tidak menimbulkan biaya yang tidak perlu?","Seberapa puas Anda terhadap manfaat penggunaan kas kelompok dibandingkan dengan biaya atau iuran yang dikeluarkan anggota?","Seberapa puas Anda terhadap transparansi pengelolaan kas kelompok oleh pengurus?","Seberapa puas Anda terhadap keamanan penyimpanan dan pengelolaan dana kas kelompok?","Seberapa puas Anda terhadap kemudahan proses pencatatan iuran atau pembayaran kas kelompok?","Seberapa puas Anda terhadap efisiensi waktu yang dibutuhkan dalam proses administrasi kas kelompok?","Seberapa puas Anda terhadap keramahan dan kesediaan pengurus dalam melayani kebutuhan terkait kas kelompok?","Seberapa puas Anda terhadap pelayanan pengurus dalam menjawab pertanyaan atau keluhan mengenai kas kelompok?"
+31/05/2026 22:35:33,Habiba,3,4,3,5,5,4,3,3,5,5,3,3
+31/05/2026 22:36:05,Ida susanti,5,5,5,4,3,4,3,3,3,5,5,5
+31/05/2026 22:36:27,Jumriyah,4,4,5,5,3,3,3,5,5,5,5,5
+31/05/2026 22:37:05,Sunarsih S,5,5,5,4,4,4,5,3,3,3,5,5
+31/05/2026 22:37:29,Yanti,3,3,3,3,3,5,5,4,3,4,5,3
+31/05/2026 22:37:52,Juliasih,5,5,5,5,5,5,4,4,4,5,5,4
+31/05/2026 22:38:20,Sarwo,4,4,4,5,5,5,4,4,4,3,3,5
+31/05/2026 22:43:46,Kartini,4,5,5,5,5,5,4,4,4,4,4,4
+31/05/2026 22:44:30,maenah,4,4,4,4,5,5,5,4,4,4,4,4
+31/05/2026 22:45:03,Suryati,5,4,4,3,3,4,5,5,4,5,4,4`;
+
+/* ================= DATA IURAN & KEPUASAN IURAN (41 & 42 DATA) ================= */
+const DATA_IURAN = [
+  ["roh16h","Sury-33","Suryati","Sekretaris","Petak","02/06/2026",25000,35000,35000,"Juni","Lunas"],
+  ["roh16h","Ria-20","Ria Hartini","Bendahara","Petak","01/06/2026",250000,35000,100000,"Juni","Lunas"],
+  ["roh16h","Inda-30","Indayani","Anggota","Petak","05/06/2026",70000,35000,30000,"Juni","Lunas"],
+  ["roh16h","Ani-48","Ani","Anggota","Petak","05/06/2026",75000,35000,25000,"Juni","Lunas"],
+  ["roh16h","Ani-20","Ani Maya Sopa","Anggota","Petak","06/06/2026",120000,35000,15000,"Juni","Lunas"],
+  ["roh16h","Fatm-51","Fatmawati","Anggota","Petak","06/06/2026",50000,35000,15000,"Juni","Lunas"],
+  ["roh16h","Saer-32","Saeraah","Anggota","Petak","06/06/2026",85000,35000,15000,"Juni","Lunas"],
+  ["roh16h","Seni-58","Seniah","Anggota","Petak","07/06/2026",75000,35000,25000,"Juni","Lunas"],
+  ["roh16h","Habi-25","Habibbahurripa’ah","Anggota","Petak","07/06/2026",120000,35000,80000,"Juni","Lunas"],
+  ["rah12ad","Habi-11","Habibah","Sekretaris","Klampis Timur","07/06/2026",150000,35000,50000,"Juni","Lunas"],
+  ["rah12ad","Ida-42","Ida Susanti","Bendahara","Klampis Timur","07/06/2026",150000,35000,50000,"Juni","Lunas"],
+  ["rah12ad","Jumr-27","Jumriyah","Anggota","Klampis Timur","08/06/2026",50000,35000,15000,"Juni","Lunas"],
+  ["rah12ad","Amin-20","Amina","Anggota","Klampis Timur","09/06/2026",50000,35000,12000,"Juni","Lunas"],
+  ["rah12ad","Mumi-00","Muminah","Anggota","Klampis Timur","09/06/2026",100000,35000,25000,"Juni","Lunas"],
+  ["rah12ad","Mutm-28","Mutmaimah","Anggota","Klampis Timur","09/06/2026",50000,35000,50000,"Juni","Lunas"],
+  ["rah12ad","Syam-08","Syamsyiah","Anggota","Klampis Timur","10/06/2026",75000,35000,25000,"Juni","Lunas"],
+  ["rah12ad","Roki-20","Rokidah","Anggota","Klampis Timur","10/06/2026",150000,35000,25000,"Juni","Lunas"],
+  ["rah12ad","Nor-56","Nor Arofah","Anggota","Klampis Timur","10/06/2026",150000,35000,50000,"Juni","Lunas"],
+  ["rah12ad","Sainab-39","Sainab","Anggota","Klampis Timur","10/06/2026",25000,35000,15000,"Juni","Lunas"],
+  ["di 19S","Yant-17","Yanti","Sekretaris","Desa Puuhopa","11/06/2026",150000,35000,50000,"Juni","Lunas"],
+  ["di 19S","Ira-37","Ira Yusnita","Bendahara","Desa Puuhopa","11/06/2026",85000,35000,15000,"Juni","Lunas"],
+  ["di 19S","Juli-30","Juliasih","Anggota","Desa Puuhopa","12/06/2026",100000,35000,50000,"Juni","Lunas"],
+  ["di 19S","Cucu-20","Cucu R","Anggota","Desa Puuhopa","13/06/2026",100000,35000,25000,"Juni","Lunas"],
+  ["di 19S","Nene-38","Neneng","Anggota","Desa Puuhopa","13/06/2026",35000,35000,25000,"Juni","Lunas"],
+  ["di 19S","Titi-14","Titi M","Anggota","Desa Puuhopa","15/06/2026",85000,35000,25000,"Juni","Lunas"],
+  ["di 19S","Part-28","Partini","Anggota","Desa Puuhopa","15/06/2026",90000,35000,20000,"Juni","Lunas"],
+  ["di 19S","Rohm-16","Rohma","Anggota","Desa Puuhopa","16/06/2026",150000,35000,50000,"Juni","Lunas"],
+  ["di 19S","Cici-53","Cici","Anggota","Desa Puuhopa","17/06/2026",150000,35000,50000,"Juni","Lunas"],
+  ["eki18wo","Wiwi-04","Wiwin Sunarti","Sekretaris","Jipanghulu","18/06/2026",29000,35000,31000,"Juni","Lunas"],
+  ["eki18wo","Kart-42","Kartini","Bendahara","Jipanghulu","19/06/2026",75000,35000,25000,"Juni","Lunas"],
+  ["eki18wo","Semi-48","Sariyah","Anggota","Jipanghulu","20/06/2026",120000,35000,30000,"Juni","Lunas"],
+  ["eki18wo","Jira-53","Jirah","Anggota","Ngelo","21/06/2026",29000,35000,25000,"Juni","Lunas"],
+  ["eki18wo","Sri -36","Sri Sumari","Anggota","Jipanghulu","21/06/2026",178000,35000,67000,"Juni","Lunas"],
+  ["eki18wo","Supi-13","Supinah","Anggota","Jipanghulu","23/06/2026",150000,35000,23000,"Juni","Lunas"],
+  ["eki18wo","Wart-33","Warti B","Anggota","Ngelo","25/06/2026",57000,35000,45000,"Juni","Lunas"],
+  ["eki18wo","Sula-21","Sulasri","Anggota","Jipanghulu","26/06/2026",54000,35000,12000,"Juni","Lunas"],
+  ["eki18wo","Wart-12","Warti A","Anggota","Ngelo","29/06/2026",230000,35000,98000,"Juni","Lunas"],
+  ["11001","Aman-46","Aman 01","Ketua","Jl Mawar Merah 01 Banjarmasin","30/06/2026",50000,35000,23000,"Juni","Lunas"],
+  ["11001","Aman-24","Aman 02","Anggota","Jl Mawar Merah 01 Banjarmasin","30/06/2026",45000,35000,34000,"Juni","Lunas"],
+  ["02-01","Budi-41","Budi 01","Sekretaris","Jl Mawar Merah 01 Banjarbaru","30/06/2026",65000,35000,50000,"Juni","Lunas"],
+  ["02-01","Budi-34","Budi 02","Anggota","Jl Mawar Merah 01 Banjarbaru","30/06/2026",56000,35000,54000,"Juni","Lunas"]
+].map(r=>({token:r[0],id:r[1],nama:r[2],jabatan:r[3],alamat:r[4],tgl:r[5],tabungan:r[6],iuran:r[7],sukarela:r[8],bulan:r[9],status:r[10]}));
+
+const SURVEY_IURAN_LABELS = ["1. Kemudahan sistem","2. Kecepatan fitur","3. Kejelasan info","4. Ketepatan data","5. Kurangi catat manual","6. Hemat waktu","7. Keamanan data","8. Kurangi kesalahan","9. Cari data anggota","10. Rekapitulasi data","11. Tampilan fitur","12. Kepuasan total"];
+const DATA_KEP_IURAN = [
+  ["5/31/2026 21:23","Habibah",[4,4,3,3,4,5,5,4,4,5,5,4]],["5/31/2026 21:28","Partini",[3,3,2,2,4,5,5,4,3,4,4,3]],
+  ["5/31/2026 21:35","Maenah",[5,3,4,2,3,4,3,2,3,4,4,3]],["5/31/2026 21:51","Ida Susanti",[4,3,4,3,1,2,3,4,5,3,4,3]],
+  ["5/31/2026 21:52","Sarwo",[5,4,5,3,4,4,4,3,3,3,3,3]],["5/31/2026 21:52","Wiwin Sunarti",[3,4,3,3,4,4,5,5,4,4,3,3]],
+  ["5/31/2026 21:53","Ria Hartini",[4,4,3,3,4,3,3,4,5,5,4,4]],["5/31/2026 21:53","Juliasih",[5,5,4,4,3,4,4,3,3,4,4,5]],
+  ["5/31/2026 21:54","Syamsyiah",[5,4,5,4,4,3,3,4,3,3,4,4]],["5/31/2026 21:54","Neneng",[5,4,4,3,3,3,4,5,4,3,4,4]],
+  ["5/31/2026 21:55","Supinah",[5,4,3,4,3,3,4,4,3,4,5,5]],["5/31/2026 21:55","Jirah",[5,4,4,5,5,4,3,3,4,3,3,5]],
+  ["5/31/2026 21:56","Ani",[5,5,4,3,4,4,3,3,4,4,5,5]],["5/31/2026 21:56","Warti B",[5,4,3,4,4,5,5,3,3,4,4,4]],
+  ["5/31/2026 21:57","Indayani",[5,4,3,5,5,5,3,3,4,4,3,3]],["5/31/2026 21:57","Amina",[5,4,3,4,4,3,3,4,3,4,4,5]],
+  ["6/6/2026 15:05","Uswa Hasanah As’ad",[4,4,4,3,3,5,3,4,4,4,5,5]],["6/6/2026 15:06","Jumriyah",[4,4,3,3,3,5,3,3,3,3,4,3]],
+  ["6/6/2026 15:06","Sainab",[5,3,3,3,3,4,3,3,4,3,5,4]],["6/6/2026 15:07","Nor Arofah",[3,4,4,3,3,3,3,3,4,3,4,4]],
+  ["6/6/2026 15:07","Mu’minah",[3,3,3,3,3,3,3,3,3,3,4,4]],["6/6/2026 15:08","Rokidah",[4,4,3,3,3,3,4,4,4,3,5,5]],
+  ["6/6/2026 15:08","Mutmaimah",[5,4,3,3,3,4,3,3,4,4,4,4]],["6/6/2026 16:02","Warti A",[3,1,2,2,4,4,3,3,3,3,3,3]],
+  ["6/6/2026 16:03","Habibbahurripa’ah",[2,1,3,2,2,3,4,3,3,2,2,3]],["6/6/2026 16:04","Ani Maya Sopa",[5,4,3,4,4,5,3,5,3,3,5,5]],
+  ["6/6/2026 16:04","Seniah",[3,4,5,3,5,5,4,5,4,3,5,5]],["6/6/2026 16:05","Saerah",[5,4,5,4,3,3,4,5,4,3,5,5]],
+  ["6/6/2026 16:05","Fatmawati",[2,1,2,3,2,3,2,1,3,1,2,2]],["6/6/2026 16:06","Suriyati",[3,4,3,4,5,5,3,3,4,5,5,5]],
+  ["6/6/2026 16:06","Sulasri",[4,5,3,3,5,4,4,5,4,5,5,5]],["6/6/2026 16:07","Jirah",[3,4,5,5,3,3,4,4,5,5,5,5]],
+  ["6/6/2026 16:07","Sariyah",[2,2,1,2,2,3,4,3,3,1,3,4]],["6/6/2026 16:09","Sunarsih, S",[2,1,3,3,3,2,4,3,4,4,4,4]],
+  ["6/6/2026 16:10","Ira Yusnita",[2,1,2,3,2,2,1,2,3,2,3,3]],["6/6/2026 16:10","Cici",[2,1,2,3,2,3,3,4,4,4,4,5]],
+  ["6/6/2026 16:11","Cucu R",[2,1,1,2,3,3,3,2,2,3,4,3]],["6/6/2026 16:11","Rohma",[3,4,3,4,5,3,4,3,3,4,3,4]],
+  ["6/6/2026 16:13","Titi M",[3,3,4,5,3,3,4,5,5,2,4,5]],["6/6/2026 16:13","Kartini",[2,2,1,3,3,3,1,3,3,2,2,3]],
+  ["6/6/2026 16:14","Semiati",[2,3,2,3,3,3,2,3,3,3,3,3]],["6/6/2026 16:15","Sri Sumarni",[4,2,2,3,4,5,2,3,3,2,3,4]]
+].map(r=>({ts:r[0],nama:r[1],scores:r[2]}));
+
+/* ================= DATA SIMPAN PINJAM & PIECES PINJAMAN (15 & 6 DATA) ================= */
+const DATA_PINJAMAN = [
+  { caseNo: 1, timestamp: "15/06/2026 12:32:28", kelompok: "rah12ad", tokenAnggota: "jumr-25", nama: "jumriyah", jabatan: "Anggota", tanggal: "10/01/2026", besar: 1200000, jangka: "12 Bulan", keperluan: "Modal Usaha", angsuran: Array(12).fill(100000) },
+  { caseNo: 2, timestamp: "15/06/2026 12:37:18", kelompok: "rah12ad", tokenAnggota: "Habi-11", nama: "Habibah", jabatan: "Sekretaris", tanggal: "13/01/2026", besar: 1500000, jangka: "3 Bulan", keperluan: "Pembelian Bahan Baku", angsuran: Array(3).fill(500000) },
+  { caseNo: 3, timestamp: "15/06/2026 12:42:22", kelompok: "rah12ad", tokenAnggota: "Amin-20", nama: "Amina", jabatan: "Anggota", tanggal: "10/02/2026", besar: 1800000, jangka: "6 Bulan", keperluan: "Pengembangan Usaha", angsuran: Array(6).fill(300000) },
+  { caseNo: 4, timestamp: "15/06/2026 12:45:19", kelompok: "di 19S", tokenAnggota: "Yant-17", nama: "Yanti", jabatan: "Sekretaris", tanggal: "18/02/2026", besar: 2400000, jangka: "12 Bulan", keperluan: "Penambahan Peralatan", angsuran: Array(12).fill(200000) },
+  { caseNo: 5, timestamp: "15/06/2026 12:48:05", kelompok: "di 19S", tokenAnggota: "Juli-30", nama: "Juliasih", jabatan: "Anggota", tanggal: "14/02/2026", besar: 1200000, jangka: "3 Bulan", keperluan: "Modal Produksi", angsuran: Array(3).fill(400000) },
+  { caseNo: 6, timestamp: "15/06/2026 12:51:02", kelompok: "roh16h", tokenAnggota: "Sury-33", nama: "Suryati", jabatan: "Sekretaris", tanggal: "18/02/2026", besar: 1800000, jangka: "6 Bulan", keperluan: "Pembelian Bahan Baku", angsuran: Array(6).fill(300000) },
+  { caseNo: 7, timestamp: "15/06/2026 12:53:56", kelompok: "roh16h", tokenAnggota: "Fatm-51", nama: "Fatmawati", jabatan: "Anggota", tanggal: "01/03/2026", besar: 3600000, jangka: "12 Bulan", keperluan: "Pengembangan Usaha", angsuran: Array(12).fill(300000) },
+  { caseNo: 8, timestamp: "15/06/2026 12:56:11", kelompok: "eki18wo", tokenAnggota: "Wiwi-04", nama: "Wiwin Sunarti", jabatan: "Sekretaris", tanggal: "10/03/2026", besar: 500000, jangka: "1 Bulan", keperluan: "Kebutuhan Operasional", angsuran: [500000] },
+  { caseNo: 9, timestamp: "15/06/2026 12:58:18", kelompok: "eki18wo", tokenAnggota: "Semi-48", nama: "Semiati", jabatan: "Anggota", tanggal: "05/04/2026", besar: 1500000, jangka: "3 Bulan", keperluan: "Modal Usaha", angsuran: Array(3).fill(500000) },
+  { caseNo: 10, timestamp: "15/06/2026 13:00:33", kelompok: "eki18wo", tokenAnggota: "Wart-12", nama: "Warti A", jabatan: "Anggota", tanggal: "12/04/2026", besar: 2400000, jangka: "6 Bulan", keperluan: "Pembelian Alat Produksi", angsuran: Array(6).fill(400000) },
+  { caseNo: 13, timestamp: "25/06/2026 01:02:11", kelompok: "rah12ad", tokenAnggota: "Habi-11", nama: "Habibah", jabatan: "Sekretaris", tanggal: "25/06/2026", besar: 900000, jangka: "3 Bulan", keperluan: "Modal Usaha", angsuran: Array(3).fill(300000) },
+  { caseNo: 14, timestamp: "25/06/2026 10:30:00", kelompok: "11001", tokenAnggota: "Aman-46", nama: "Aman 01", jabatan: "Ketua kelompok", tanggal: "25/06/2026", besar: 1500000, jangka: "3 Bulan", keperluan: "Modal Usaha", angsuran: Array(3).fill(500000) },
+  { caseNo: 15, timestamp: "25/06/2026 10:35:50", kelompok: "11001", tokenAnggota: "Aman-24", nama: "Aman 02", jabatan: "Anggota", tanggal: "25/06/2026", besar: 1800000, jangka: "6 Bulan", keperluan: "Pengembangan Usaha", angsuran: Array(6).fill(300000) },
+  { caseNo: 16, timestamp: "25/06/2026 11:04:37", kelompok: "02-01", tokenAnggota: "Budi-41", nama: "Budi 01", jabatan: "Sekretaris", tanggal: "25/06/2026", besar: 3600000, jangka: "12 Bulan", keperluan: "Pengembangan Usaha", angsuran: Array(12).fill(300000) },
+  { caseNo: 17, timestamp: "25/06/2026 11:22:23", kelompok: "02-01", tokenAnggota: "Budi-34", nama: "Budi 02", jabatan: "Anggota", tanggal: "25/06/2026", besar: 3000000, jangka: "3 Bulan", keperluan: "Penambahan Peralatan", angsuran: Array(3).fill(1000000) }
+];
+
+const DATA_PIECES_PINJAMAN = [
+  { dimensi: "Performance", stp: 0, tp: 0, p: 1, cp: 11, sp: 8, totalSkor: 87, rata: 4.35, kesimpulan: "Sangat Puas (SP)" },
+  { dimensi: "Information", stp: 0, tp: 0, p: 1, cp: 11, sp: 8, totalSkor: 87, rata: 4.35, kesimpulan: "Sangat Puas (SP)" },
+  { dimensi: "Economy", stp: 0, tp: 0, p: 1, cp: 11, sp: 8, totalSkor: 87, rata: 4.35, kesimpulan: "Sangat Puas (SP)" },
+  { dimensi: "Control", stp: 0, tp: 0, p: 2, cp: 10, sp: 8, totalSkor: 86, rata: 4.30, kesimpulan: "Sangat Puas (SP)" },
+  { dimensi: "Efficiency", stp: 0, tp: 0, p: 0, cp: 11, sp: 9, totalSkor: 89, rata: 4.45, kesimpulan: "Sangat Puas (SP)" },
+  { dimensi: "Service", stp: 0, tp: 0, p: 0, cp: 8, sp: 12, totalSkor: 92, rata: 4.60, kesimpulan: "Sangat Puas (SP)" }
+];
+
+const DIMS = ["Performance", "Information", "Economics", "Control & Security", "Efficiency", "Service"];
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const rp = n => "Rp " + Number(n || 0).toLocaleString("id-ID");
+const grpInfo = t => GROUP_META[(t || "").trim()] || { name: (t || "Lainnya").trim(), icon: "👥", test: false };
+
+let state = { kas: [], masuk: 0, keluar: 0, cMasuk: 0, cKeluar: 0, liveKas: false, respKas: [], qMetaKas: [], meanDimsKas: {}, overallKas: 0, includeTestIuran: false };
+let activeCharts = [];
+
+function clearCharts(){ activeCharts.forEach(c => { try{ c.destroy(); }catch{} }); activeCharts = []; }
+
+function parseCSV(txt){
+  return txt.trim().split(/\r?\n/).map(l => l.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.trim().replace(/^"|"$/g,"").replace(/""/g,'"')));
+}
+
+function loadKas(csv, isLive){
+  const rows = parseCSV(csv); if(rows.length < 2) return;
+  const h = rows[0].map(x => x.toLowerCase());
+  const iTok = h.findIndex(x => x.includes("token kelompok")), iAng = h.findIndex(x => x.includes("token anggota"));
+  const iNam = h.findIndex(x => x === "nama" || x.includes("nama")), iJab = h.findIndex(x => x.includes("jabatan"));
+  const iTgl = h.findIndex(x => x.includes("tanggal")), iJen = h.findIndex(x => x.includes("jenis"));
+  const iJml = h.findIndex(x => x === "jumlah"), iNom = h.findIndex(x => x.includes("nominal"));
+  const iKet = h.findIndex(x => x.includes("keterangan")), iBuk = h.findIndex(x => x.includes("bukti"));
+  let list = [], m = 0, k = 0, cm = 0, ck = 0;
+  for(let i = 1; i < rows.length; i++){
+    const r = rows[i]; if(!r || r.length < 4) continue;
+    const jenis = (r[iJen] || "").trim(); if(!jenis) continue;
+    const nom = parseInt(((r[iNom] || "0")).replace(/[^\d]/g, ""), 10) || 0;
+    if(jenis.toLowerCase().includes("masuk")){ m += nom; cm++; } else if(jenis.toLowerCase().includes("keluar")){ k += nom; ck++; }
+    list.push({ tok: r[iTok]||"-", ang: r[iAng]||"-", nama: r[iNam]||"-", jab: r[iJab]||"-", tgl: r[iTgl]||"-", jenis, jml: r[iJml]||"1", nom, ket: r[iKet]||"-", bukti: r[iBuk]||"" });
+  }
+  state.kas = list; state.masuk = m; state.keluar = k; state.cMasuk = cm; state.cKeluar = ck; state.liveKas = isLive;
+}
+
+function dimOf(txt, idx, tot){
+  const t = (txt || "").toLowerCase();
+  if(t.includes("kecepatan") || t.includes("ketepatan")) return "Performance";
+  if(t.includes("informasi") || t.includes("saldo") || t.includes("kejelasan")) return "Information";
+  if(t.includes("biaya") || t.includes("manfaat") || t.includes("iuran")) return "Economics";
+  if(t.includes("transparansi") || t.includes("keamanan")) return "Control & Security";
+  if(t.includes("kemudahan") || t.includes("efisiensi")) return "Efficiency";
+  if(t.includes("keramahan") || t.includes("pelayanan")) return "Service";
+  return DIMS[Math.min(5, Math.floor(idx / Math.max(1, Math.round(tot / 6))))];
+}
+
+function katLikert(s){
+  if(s >= 4.21) return { l: "Sangat Puas", c: "green" };
+  if(s >= 3.41) return { l: "Puas", c: "blue" };
+  if(s >= 2.61) return { l: "Cukup Puas", c: "amber" };
+  return { l: "Kurang Puas", c: "red" };
+}
+
+function loadKepuasanKas(csv){
+  const rows = parseCSV(csv); if(rows.length < 2) return;
+  const h = rows[0], hl = h.map(x => x.toLowerCase()), iNam = hl.findIndex(x => x.includes("nama"));
+  const qIdx = [];
+  for(let c = 0; c < h.length; c++){ if(c !== iNam && !hl[c].includes("timestamp") && !isNaN(parseFloat(rows[1][c]))) qIdx.push(c); }
+  const qMeta = qIdx.map((col, i) => ({ code: "P"+(i+1), col, text: h[col], dim: dimOf(h[col], i, qIdx.length), avg: 0 }));
+  const resp = [];
+  for(let i = 1; i < rows.length; i++){
+    const r = rows[i]; if(!r || r.length < 3) continue;
+    const b = {}; DIMS.forEach(d => b[d] = []); let tot = 0, cnt = 0, sc = [];
+    qMeta.forEach(q => { const v = parseFloat(r[q.col]) || 0; sc.push(v); if(v > 0){ b[q.dim].push(v); tot += v; cnt++; } });
+    if(!cnt) continue;
+    const dims = {}; DIMS.forEach(d => dims[d] = b[d].length ? b[d].reduce((a,c)=>a+c,0)/b[d].length : 0);
+    resp.push({ nama: (r[iNam]||("Responden "+i)).trim(), sc, dims, avg: tot/cnt });
+  }
+  const n = resp.length || 1;
+  qMeta.forEach((q, qi) => q.avg = resp.reduce((s, x) => s + (x.sc[qi]||0), 0) / n);
+  const meanDims = {};
+  DIMS.forEach(d => { const qs = qMeta.filter(q => q.dim === d); meanDims[d] = qs.length ? qs.reduce((s, q) => s + q.avg, 0) / qs.length : 0; });
+  state.respKas = resp; state.qMetaKas = qMeta; state.meanDimsKas = meanDims; state.overallKas = resp.reduce((s, x) => s + x.avg, 0) / n;
+}
+
+function buildNav(){
+  $("#navPills").innerHTML = CONFIG.halaman.map(h => `<a href="#${h.id}" class="nav-link" data-id="${h.id}">${esc(h.nav)}</a>`).join("");
+  $("#dropMenu").innerHTML = CONFIG.menuUtama.map(m => `<a href="${esc(m.url)}">${esc(m.label)} <span>&rarr;</span></a>`).join("");
+  $("#mobileDrawer").innerHTML = CONFIG.halaman.map(h => `<a href="#${h.id}" data-id="${h.id}">${esc(h.judul)}</a>`).join("") + `<hr style="border:0;border-top:1px solid var(--garis);margin:8px 0">` + CONFIG.menuUtama.map(m => `<a href="${esc(m.url)}">${esc(m.label)}</a>`).join("");
+}
+
+/* ================= HALAMAN BERANDA ================= */
+function renderBeranda(h){
+  const saldoKas = state.masuk - state.keluar;
+  const totIuranAll = DATA_IURAN.filter(d => !grpInfo(d.token).test).reduce((s, d) => s + d.tabungan + d.iuran + d.sukarela, 0);
+  const totPinjam = DATA_PINJAMAN.reduce((s, d) => s + d.besar, 0);
+  const avgPiecesPinjam = (DATA_PIECES_PINJAMAN.reduce((s, d) => s + d.rata, 0) / DATA_PIECES_PINJAMAN.length).toFixed(2);
+
+  const cards = [
+    { id: "kas-kelompok", judul: "1. Kas Kelompok & PIECES", desc: CONFIG.halaman[1].desc, info: `${state.kas.length} transaksi kas • ${state.respKas.length} responden PIECES` },
+    { id: "iuran-kelompok", judul: "2. Iuran & Tabungan Kelompok", desc: CONFIG.halaman[2].desc, info: `${DATA_IURAN.length} anggota • ${DATA_KEP_IURAN.length} responden survei` },
+    { id: "simpan-pinjam", judul: "3. Simpan Pinjam Anggota", desc: CONFIG.halaman[3].desc, info: `${DATA_PINJAMAN.length} pinjaman aktif • PIECES ${avgPiecesPinjam}/5` }
+  ].map(c => `
+    <article class="mod-card">
+      <div>
+        <span class="mod-tag">Terhubung Live + Grafik</span>
+        <h3>${esc(c.judul)}</h3>
+        <p>${esc(c.desc)}</p>
+      </div>
+      <a href="#${c.id}" class="mod-foot"><span>${esc(c.info)}</span><span>&rarr;</span></a>
+    </article>`).join("");
+
+  return `
+    <section class="hero">
+      <div class="hero-grid">
+        <div>
+          <span class="hero-chip">Tugas 4 • ${esc(CONFIG.regulasi)}</span>
+          <h1>${esc(h.judul)}</h1>
+          <p>${esc(h.desc)}</p>
+          <div class="hero-actions">
+            <a href="#kas-kelompok" class="btn btn-cyan">Kas Kelompok &rarr;</a>
+            <a href="#iuran-kelompok" class="btn btn-glass">Iuran Kelompok &rarr;</a>
+            <a href="#simpan-pinjam" class="btn btn-glass">Simpan Pinjam &rarr;</a>
+          </div>
+        </div>
+        <aside class="hero-id">
+          <small>Identitas Pengembang</small>
+          <h2>${esc(CONFIG.nama)}</h2>
+          <div class="hero-id-row"><span>NIM</span><span>${esc(CONFIG.nim)}</span></div>
+          <div class="hero-id-row"><span>Bagian</span><span>POKLAHSAR</span></div>
+          <div class="hero-id-row"><span>Subsistem Aktif</span><span>Kas, Iuran &amp; Simpan Pinjam</span></div>
+        </aside>
+      </div>
+    </section>
+
+    <div class="sec-head"><div><h2>Ringkasan Keuangan Gabungan POKLAHSAR</h2><p>Data terintegrasi dari ketiga subsistem keuangan kelompok</p></div></div>
+    <section class="kpi-grid">
+      <div class="kpi"><small>Saldo Kas Kelompok</small><strong class="mono">${rp(saldoKas)}</strong><span>Masuk ${rp(state.masuk)} &bull; Keluar ${rp(state.keluar)}</span></div>
+      <div class="kpi cyan"><small>Dana Iuran (4 Kelompok Resmi)</small><strong class="mono">${rp(totIuranAll)}</strong><span>Tabungan, Iuran Wajib &amp; Sukarela</span></div>
+      <div class="kpi navy"><small>Dana Simpan Pinjam Tersalurkan</small><strong class="mono">${rp(totPinjam)}</strong><span>${DATA_PINJAMAN.length} transaksi pinjaman anggota</span></div>
+      <div class="kpi amber"><small>Rata-rata Kepuasan PIECES</small><strong class="mono">${avgPiecesPinjam} / 5.00</strong><span>Kas ${state.overallKas.toFixed(2)} &bull; Pinjam ${avgPiecesPinjam}</span></div>
+    </section>
+
+    <div class="sec-head"><div><h2>3 Modul Administrasi Keuangan Terintegrasi</h2><p>Klik salah satu modul untuk membuka Google Form, Live Spreadsheet, Grafik &amp; Looker Studio</p></div></div>
+    <section class="mod-grid">${cards}</section>
+
+    <div class="sec-head"><div><h2>Alur Sistem Informasi POKLAHSAR</h2></div></div>
+    <section class="steps">
+      <div class="step"><div class="step-num">01</div><h4>Google Form</h4><p>Penginputan transaksi kas, setoran iuran, pengajuan pinjaman &amp; survei kepuasan.</p></div>
+      <div class="step"><div class="step-num">02</div><h4>Token Kelompok</h4><p>Penghubung data antar modul menggunakan token kelompok &amp; anggota.</p></div>
+      <div class="step"><div class="step-num">03</div><h4>Google Spreadsheet</h4><p>Tersaji langsung secara real-time dan tersinkron ke tabel web.</p></div>
+      <div class="step"><div class="step-num">04</div><h4>Grafik &amp; Looker</h4><p>Visualisasi analitik Chart.js, Looker Studio &amp; evaluasi PIECES.</p></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head"><h3>Kelompok POKLAHSAR Terintegrasi</h3><span class="panel-badge">${Object.keys(GROUP_META).length} Token Kelompok</span></div>
+      <div class="tbl-scroll">
+        <table>
+          <thead><tr><th>Token</th><th>Nama Kelompok</th><th>Kategori</th><th>Jml Anggota Iuran</th><th>Jml Pinjaman</th></tr></thead>
+          <tbody>${Object.entries(GROUP_META).map(([tok, g]) => {
+            const cI = DATA_IURAN.filter(x => x.token === tok).length;
+            const cP = DATA_PINJAMAN.filter(x => x.kelompok === tok).length;
+            return `<tr><td><span class="code-pill">${esc(tok)}</span></td><td><strong>${g.icon} ${esc(g.name)}</strong></td><td><span class="pill ${g.test?"amber":"green"}">${g.test?"Uji Coba":"Kelompok Resmi"}</span></td><td class="mono">${cI} data</td><td class="mono">${cP} pinjaman</td></tr>`;
+          }).join("")}</tbody>
+        </table>
+      </div>
+    </section>`;
+}
+
+/* ================= 1. MODUL KAS KELOMPOK ================= */
+function renderKas(h){
+  const L = CONFIG.links.kas, saldo = state.masuk - state.keluar, kat = katLikert(state.overallKas);
+  const sDims = Object.entries(state.meanDimsKas).sort((a,b) => b[1]-a[1]), hi = sDims[0]||["-",0], lo = sDims[sDims.length-1]||["-",0];
+  return `
+    <section class="mod-banner">
+      <span class="mod-tag">${esc(CONFIG.regulasi)} • Terhubung Live</span>
+      <h1>${esc(h.judul)}</h1><p>${esc(h.desc)}</p>
+      <div class="aksi">
+        <a href="${esc(L.formUrl)}" target="_blank" class="btn btn-primary">Buka Google Form Kas</a>
+        <a href="${esc(L.sheetUrl)}" target="_blank" class="btn btn-outline">Buka Spreadsheet Kas</a>
+        <a href="${esc(L.formKep)}" target="_blank" class="btn btn-sky">Isi Survei PIECES</a>
+        <button type="button" onclick="downloadKasPiecesXls()" class="btn btn-outline">Unduh Analisis PIECES (.xls)</button>
+      </div>
+    </section>
+    <section class="kpi-grid">
+      <div class="kpi"><small>Total Kas Masuk</small><strong class="mono">${rp(state.masuk)}</strong><span>${state.cMasuk} transaksi</span></div>
+      <div class="kpi cyan"><small>Total Kas Keluar</small><strong class="mono">${rp(state.keluar)}</strong><span>${state.cKeluar} transaksi</span></div>
+      <div class="kpi navy"><small>Saldo Kas Bersih</small><strong class="mono">${rp(saldo)}</strong><span>${saldo>=0?"Surplus":"Defisit"}</span></div>
+      <div class="kpi amber"><small>Indeks Kepuasan PIECES</small><strong class="mono">${state.overallKas.toFixed(2)} / 5</strong><span>${kat.l} (${state.respKas.length} responden)</span></div>
+    </section>
+    <div class="view-tabs">
+      <button type="button" class="vtab active" data-mode="all">Tampilan Lengkap</button>
+      <button type="button" class="vtab" data-mode="grafik">Grafik</button>
+      <button type="button" class="vtab" data-mode="form">Google Form</button>
+      <button type="button" class="vtab" data-mode="sheet">Spreadsheet Live</button>
+      <button type="button" class="vtab" data-mode="data">Tabel &amp; PIECES</button>
+      <button type="button" class="vtab" data-mode="looker">Looker Studio</button>
+    </div>
+    <div class="charts-grid" data-sec="grafik">
+      <section class="panel" style="margin-bottom:0"><div class="panel-head"><h3>Arus Kas per Token Kelompok</h3><span class="panel-badge">Masuk vs Keluar</span></div><div class="chart-box"><canvas id="kasChart"></canvas></div></section>
+      <section class="panel" style="margin-bottom:0"><div class="panel-head"><h3>Profil Skor 6 Dimensi PIECES</h3><span class="panel-badge">Skala 1–5</span></div><div class="chart-box"><canvas id="piecesKasChart"></canvas></div></section>
+    </div>
+    <section class="panel" data-sec="form" style="margin-top:20px"><div class="panel-head"><h3>Formulir Input Kas Kelompok</h3><span class="panel-badge">Google Form</span></div><div class="frame-box" style="height:560px"><iframe src="${esc(L.formEmbed)}" loading="lazy"></iframe></div></section>
+    <section class="panel" data-sec="sheet">
+      <div class="panel-head"><h3>Sajian Google Spreadsheet Live</h3><span class="panel-badge">Live</span></div>
+      <div class="sub-tabs"><button type="button" class="stab active" onclick="swapSub(this,'sk-1','skPane')">Data Kas Kelompok</button><button type="button" class="stab" onclick="swapSub(this,'sk-2','skPane')">Rekap Kepuasan Kas</button></div>
+      <div id="sk-1" class="skPane frame-box" style="height:480px"><iframe src="${esc(L.sheetEmbed)}" loading="lazy"></iframe></div>
+      <div id="sk-2" class="skPane frame-box" style="height:480px;display:none"><iframe src="${esc(L.sheetKepEmbed)}" loading="lazy"></iframe></div>
+    </section>
+    <section class="panel" data-sec="data">
+      <div class="panel-head"><h3>Data Transaksi Kas &amp; Analisis PIECES</h3><span class="panel-badge">${state.kas.length} Transaksi</span></div>
+      <div class="sub-tabs"><button type="button" class="stab active" onclick="swapSub(this,'dk-1','dkPane')">Transaksi Kas</button><button type="button" class="stab" onclick="swapSub(this,'dk-2','dkPane')">Analisis PIECES</button></div>
+      <div id="dk-1" class="dkPane">
+        <div class="table-tools"><input type="search" id="searchKas" class="search-input" placeholder="Cari nama, token, keterangan..."><select id="filterKas" class="filter-select"><option value="all">Semua</option><option value="Kas Masuk">Kas Masuk</option><option value="Kas Keluar">Kas Keluar</option></select></div>
+        <div class="tbl-scroll"><table><thead><tr><th>No</th><th>Tanggal</th><th>Token</th><th>Nama &amp; Jabatan</th><th>Jenis</th><th>Nominal</th><th>Keterangan</th><th>Bukti</th></tr></thead><tbody id="kasBody"></tbody></table></div>
+      </div>
+      <div id="dk-2" class="dkPane" style="display:none">
+        <div class="insight"><strong>Kesimpulan PIECES:</strong> Dari <strong>${state.respKas.length} responden</strong>, rata-rata kepuasan adalah <strong>${state.overallKas.toFixed(2)} / 5</strong> (${kat.l}). Tertinggi: <strong>${hi[0]} (${hi[1].toFixed(2)})</strong>; terendah: <strong>${lo[0]} (${lo[1].toFixed(2)})</strong>.</div>
+        <div class="pieces-grid">${DIMS.map(d=>{const v=state.meanDimsKas[d]||0,p=((v/5)*100).toFixed(1),kd=katLikert(v);return `<div class="pieces-card"><div style="display:flex;justify-content:space-between;font-weight:700;font-size:13px"><span>${d}</span><span class="mono" style="color:var(--biru)">${v.toFixed(2)}</span></div><div class="track"><div class="fill" style="width:${p}%"></div></div><div style="display:flex;justify-content:space-between;font-size:11.5px"><span class="pill ${kd.c}">${kd.l}</span><span class="mono">${p}%</span></div></div>`;}).join("")}</div>
+        <div class="tbl-scroll"><table><thead><tr><th>Kode</th><th>Dimensi</th><th>Indikator Pertanyaan</th><th>Skor</th><th>%</th><th>Kategori</th></tr></thead><tbody>${state.qMetaKas.map(q=>{const kq=katLikert(q.avg);return `<tr><td class="mono">${q.code}</td><td><span class="pill blue">${q.dim}</span></td><td>${esc(q.text)}</td><td class="mono">${q.avg.toFixed(2)}</td><td class="mono">${((q.avg/5)*100).toFixed(1)}%</td><td><span class="pill ${kq.c}">${kq.l}</span></td></tr>`;}).join("")}</tbody></table></div>
+      </div>
+    </section>
+    <section class="panel" data-sec="looker">
+      <div class="panel-head"><h3>Dashboard Looker Studio (Kas &amp; Kepuasan)</h3><span class="panel-badge">Looker Studio</span></div>
+      <div class="sub-tabs"><button type="button" class="stab active" onclick="swapSub(this,'lk-1','lkPane')">Looker Pendaftaran &amp; Kas</button><button type="button" class="stab" onclick="swapSub(this,'lk-2','lkPane')">Looker Kepuasan Kas</button></div>
+      <div id="lk-1" class="lkPane frame-box" style="height:520px"><iframe src="${esc(L.looker1)}" loading="lazy" allowfullscreen></iframe></div>
+      <div id="lk-2" class="lkPane frame-box" style="height:520px;display:none"><iframe src="${esc(L.looker2)}" loading="lazy" allowfullscreen></iframe></div>
+    </section>`;
+}
+
+/* ================= 2. MODUL IURAN KELOMPOK ================= */
+function getIuranFiltered(){ return DATA_IURAN.filter(d => state.includeTestIuran || !grpInfo(d.token).test); }
+
+function renderIuran(h){
+  const L = CONFIG.links.iuran, data = getIuranFiltered();
+  const totTab = data.reduce((s,d)=>s+d.tabungan,0), totIur = data.reduce((s,d)=>s+d.iuran,0), totSuk = data.reduce((s,d)=>s+d.sukarela,0);
+  const avgKep = (DATA_KEP_IURAN.reduce((s,r)=>s + r.scores.reduce((a,b)=>a+b,0)/12, 0) / DATA_KEP_IURAN.length);
+  const meansQ = SURVEY_IURAN_LABELS.map((_,i) => Number((DATA_KEP_IURAN.reduce((s,r)=>s+r.scores[i],0)/DATA_KEP_IURAN.length).toFixed(2)));
+
+  const grpMap = {};
+  data.forEach(d => {
+    if(!grpMap[d.token]) grpMap[d.token] = { token: d.token, ...grpInfo(d.token), cnt: 0, tab: 0, iur: 0, suk: 0 };
+    grpMap[d.token].cnt++; grpMap[d.token].tab += d.tabungan; grpMap[d.token].iur += d.iuran; grpMap[d.token].suk += d.sukarela;
+  });
+  const grpList = Object.values(grpMap);
+
+  return `
+    <section class="mod-banner">
+      <span class="mod-tag">${esc(CONFIG.regulasi)} • Terhubung Live</span>
+      <h1>${esc(h.judul)}</h1><p>${esc(h.desc)}</p>
+      <div class="aksi">
+        <a href="${esc(L.formUrl)}" target="_blank" class="btn btn-primary">Isi Form Iuran</a>
+        <a href="${esc(L.sheetUrl)}" target="_blank" class="btn btn-outline">Buka Spreadsheet Iuran</a>
+        <a href="${esc(L.formKep)}" target="_blank" class="btn btn-sky">Isi Form Kepuasan</a>
+        <button type="button" onclick="exportIuranCSV('iuran')" class="btn btn-outline">Unduh CSV Iuran</button>
+        <button type="button" onclick="exportIuranCSV('kepuasan')" class="btn btn-outline">Unduh CSV Kepuasan</button>
+      </div>
+    </section>
+
+    <section class="kpi-grid">
+      <div class="kpi"><small>Total Tabungan Anggota</small><strong class="mono">${rp(totTab)}</strong><span>${data.length} transaksi lunas</span></div>
+      <div class="kpi cyan"><small>Total Iuran Wajib</small><strong class="mono">${rp(totIur)}</strong><span>Rp 35.000 / anggota</span></div>
+      <div class="kpi navy"><small>Total Iuran Sukarela</small><strong class="mono">${rp(totSuk)}</strong><span>Kontribusi sukarela anggota</span></div>
+      <div class="kpi amber"><small>Rata-rata Kepuasan</small><strong class="mono">${avgKep.toFixed(2)} / 5.0</strong><span>${DATA_KEP_IURAN.length} responden survei</span></div>
+    </section>
+
+    <div class="view-tabs">
+      <button type="button" class="vtab active" data-mode="all">Tampilan Lengkap</button>
+      <button type="button" class="vtab" data-mode="kelompok">Ringkasan Kelompok</button>
+      <button type="button" class="vtab" data-mode="form">Google Form</button>
+      <button type="button" class="vtab" data-mode="sheet">Spreadsheet Live</button>
+      <button type="button" class="vtab" data-mode="data">Grafik &amp; Data Anggota</button>
+      <button type="button" class="vtab" data-mode="kepuasan">Kepuasan (${DATA_KEP_IURAN.length})</button>
+      <button type="button" class="vtab" data-mode="looker">Looker Studio</button>
+    </div>
+
+    <section class="panel" data-sec="kelompok">
+      <div class="panel-head">
+        <h3>Ringkasan Pembayaran per Kelompok (Klik kartu untuk filter tabel)</h3>
+        <label style="display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;cursor:pointer">
+          <input type="checkbox" id="toggleTestIuran" ${state.includeTestIuran?"checked":""}> Tampilkan Data Uji Coba
+        </label>
+      </div>
+      <div class="groups-grid">${grpList.map(g => `
+        <div class="group-card" onclick="filterIuranGroup('${esc(g.token)}')">
+          <div class="group-top"><span>${g.icon} ${esc(g.name)}</span><span class="pill blue">${g.cnt} Anggota</span></div>
+          <div class="group-row"><span>Tabungan</span><strong>${rp(g.tab)}</strong></div>
+          <div class="group-row"><span>Iuran Wajib</span><strong>${rp(g.iur)}</strong></div>
+          <div class="group-row"><span>Sukarela</span><strong>${rp(g.suk)}</strong></div>
+          <div class="group-tot"><span>Total Dana</span><span>${rp(g.tab+g.iur+g.suk)}</span></div>
+        </div>`).join("")}</div>
+    </section>
+
+    <section class="panel" data-sec="form"><div class="panel-head"><h3>Formulir Input Iuran Anggota</h3><span class="panel-badge">Google Form</span></div><div class="frame-box" style="height:560px"><iframe src="${esc(L.formEmbed)}" loading="lazy"></iframe></div></section>
+    <section class="panel" data-sec="sheet"><div class="panel-head"><h3>Tampilan Data Spreadsheet Iuran (Live)</h3><span class="panel-badge">Live Spreadsheet</span></div><div class="frame-box" style="height:500px"><iframe src="${esc(L.sheetUrl)}" loading="lazy"></iframe></div></section>
+
+    <div class="charts-grid" data-sec="data">
+      <section class="panel" style="margin-bottom:0"><div class="panel-head"><h3>Perbandingan Dana per Kelompok</h3><span class="panel-badge">Bar Chart</span></div><div class="chart-box"><canvas id="iuranBarChart"></canvas></div></section>
+      <section class="panel" style="margin-bottom:0"><div class="panel-head"><h3>Komposisi Total Dana Iuran</h3><span class="panel-badge">Donut Chart</span></div><div class="chart-box"><canvas id="iuranDonutChart"></canvas></div></section>
+    </div>
+
+    <section class="panel" data-sec="data" id="iuranTablePanel" style="margin-top:20px">
+      <div class="panel-head"><h3>Daftar Transaksi Iuran Anggota</h3><span class="panel-badge" id="iuranCountBadge">${data.length} Data</span></div>
+      <div class="table-tools">
+        <input type="search" id="searchIuran" class="search-input" placeholder="Cari nama, ID, atau alamat...">
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <select id="filterIuranKel" class="filter-select"><option value="ALL">Semua Kelompok</option>${grpList.map(g=>`<option value="${esc(g.token)}">${g.icon} ${esc(g.name)}</option>`).join("")}</select>
+          <select id="filterIuranJab" class="filter-select"><option value="ALL">Semua Jabatan</option><option value="Ketua">Ketua</option><option value="Sekretaris">Sekretaris</option><option value="Bendahara">Bendahara</option><option value="Anggota">Anggota</option></select>
+        </div>
+      </div>
+      <div class="tbl-scroll"><table><thead><tr><th>No</th><th>Kelompok</th><th>Token</th><th>Nama</th><th>Jabatan</th><th>Alamat</th><th>Tabungan</th><th>Iuran</th><th>Sukarela</th><th>Bulan</th><th>Status</th></tr></thead><tbody id="iuranBody"></tbody></table></div>
+    </section>
+
+    <section class="panel" data-sec="kepuasan">
+      <div class="panel-head"><h3>Analisis Tingkat Kepuasan (12 Indikator • ${DATA_KEP_IURAN.length} Responden)</h3><span class="panel-badge">Skor ${avgKep.toFixed(2)} / 5 (${((avgKep/5)*100).toFixed(1)}%)</span></div>
+      <div class="chart-box" style="height:340px"><canvas id="kepuasanIuranChart"></canvas></div>
+      <div class="table-tools"><input type="search" id="searchKepIuran" class="search-input" placeholder="Cari nama responden..."><span class="pill blue">Kepuasan Umum (P12): ${meansQ[11].toFixed(2)} / 5.00</span></div>
+      <div class="tbl-scroll"><table><thead><tr><th>No</th><th>Waktu</th><th>Nama Responden</th><th>P1</th><th>P6</th><th>P11</th><th>P12</th><th>Rata-rata</th></tr></thead><tbody id="kepIuranBody"></tbody></table></div>
+    </section>
+
+    <section class="panel" data-sec="looker">
+      <div class="panel-head"><h3>Dashboard Looker Studio (Iuran &amp; Kepuasan)</h3><span class="panel-badge">Looker Studio</span></div>
+      <div class="sub-tabs"><button type="button" class="stab active" onclick="swapSub(this,'li-1','liPane')">Looker Data Iuran</button><button type="button" class="stab" onclick="swapSub(this,'li-2','liPane')">Looker Kepuasan Iuran</button></div>
+      <div id="li-1" class="liPane frame-box" style="height:540px"><iframe src="${esc(L.looker1)}" loading="lazy" allowfullscreen></iframe></div>
+      <div id="li-2" class="liPane frame-box" style="height:540px;display:none"><iframe src="${esc(L.looker2)}" loading="lazy" allowfullscreen></iframe></div>
+    </section>`;
+}
+
+/* ================= 3. MODUL SIMPAN PINJAM ================= */
+function renderSimpanPinjam(h){
+  const L = CONFIG.links.pinjam;
+  const totPinj = DATA_PINJAMAN.reduce((s,d)=>s+d.besar,0);
+  const kelSet = [...new Set(DATA_PINJAMAN.map(d=>d.kelompok))];
+  const angSet = new Set(DATA_PINJAMAN.map(d=>d.tokenAnggota));
+  const avgP = (DATA_PIECES_PINJAMAN.reduce((s,d)=>s+d.rata,0)/DATA_PIECES_PINJAMAN.length).toFixed(2);
+
+  return `
+    <section class="mod-banner">
+      <span class="mod-tag">${esc(CONFIG.regulasi)} • Terhubung Live</span>
+      <h1>${esc(h.judul)}</h1><p>${esc(h.desc)}</p>
+      <div class="aksi">
+        <a href="${esc(L.formUrl)}" target="_blank" class="btn btn-primary">Buka Form Simpan Pinjam</a>
+        <a href="${esc(L.sheetUrl)}" target="_blank" class="btn btn-outline">Buka Spreadsheet Pinjaman</a>
+        <a href="${esc(L.formKep)}" target="_blank" class="btn btn-sky">Form Survei PIECES</a>
+        <button type="button" onclick="exportPinjamanCSV()" class="btn btn-outline">Unduh Rekap Pinjaman (.csv)</button>
+      </div>
+    </section>
+
+    <section class="kpi-grid">
+      <div class="kpi"><small>Total Dana Tersalurkan</small><strong class="mono">${rp(totPinj)}</strong><span>${DATA_PINJAMAN.length} transaksi tercatat</span></div>
+      <div class="kpi cyan"><small>Kelompok Terdaftar</small><strong class="mono">${kelSet.length} Kelompok</strong><span>${angSet.size} anggota peminjam unik</span></div>
+      <div class="kpi navy"><small>Indeks Kepuasan (PIECES)</small><strong class="mono">${avgP} / 5.00</strong><span>Kategori: Sangat Puas (SP)</span></div>
+      <div class="kpi amber"><small>Responden Survei</small><strong class="mono">10 Anggota</strong><span>6 Dimensi PIECES (12 Item)</span></div>
+    </section>
+
+    <div class="view-tabs">
+      <button type="button" class="vtab active" data-mode="all">Tampilan Lengkap</button>
+      <button type="button" class="vtab" data-mode="grafik">Grafik</button>
+      <button type="button" class="vtab" data-mode="form">Google Form</button>
+      <button type="button" class="vtab" data-mode="sheet">Spreadsheet Live</button>
+      <button type="button" class="vtab" data-mode="data">Tabel &amp; Angsuran</button>
+      <button type="button" class="vtab" data-mode="pieces">Analisis PIECES</button>
+      <button type="button" class="vtab" data-mode="looker">Looker Studio</button>
+    </div>
+
+    <div class="charts-grid" data-sec="grafik">
+      <section class="panel" style="margin-bottom:0"><div class="panel-head"><h3>Total Pinjaman per Token Kelompok</h3><span class="panel-badge">Bar Chart</span></div><div class="chart-box"><canvas id="spKelChart"></canvas></div></section>
+      <section class="panel" style="margin-bottom:0"><div class="panel-head"><h3>Distribusi Keperluan Pinjaman</h3><span class="panel-badge">Donut Chart</span></div><div class="chart-box"><canvas id="spKepChart"></canvas></div></section>
+    </div>
+
+    <section class="panel" data-sec="form" style="margin-top:20px"><div class="panel-head"><h3>Formulir Simpan Pinjam Anggota</h3><span class="panel-badge">Google Form</span></div><div class="frame-box" style="height:560px"><iframe src="${esc(L.formEmbed)}" loading="lazy"></iframe></div></section>
+    <section class="panel" data-sec="sheet"><div class="panel-head"><h3>Live Google Spreadsheet Simpan Pinjam</h3><span class="panel-badge">Live Spreadsheet</span></div><div class="frame-box" style="height:500px"><iframe src="${esc(L.sheetUrl)}" loading="lazy"></iframe></div></section>
+
+    <section class="panel" data-sec="data">
+      <div class="panel-head"><h3>Daftar Pinjaman &amp; Rincian Angsuran</h3><span class="panel-badge" id="spCountBadge">${DATA_PINJAMAN.length} Pinjaman</span></div>
+      <div class="table-tools">
+        <input type="search" id="searchPinjam" class="search-input" placeholder="Cari nama, token, atau keperluan...">
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <select id="filterSpKel" class="filter-select"><option value="">Semua Kelompok</option>${kelSet.map(k=>`<option value="${esc(k)}">${esc(k)} (${grpInfo(k).name})</option>`).join("")}</select>
+          <select id="filterSpTenor" class="filter-select"><option value="">Semua Tenor</option><option value="1 Bulan">1 Bulan</option><option value="3 Bulan">3 Bulan</option><option value="6 Bulan">6 Bulan</option><option value="12 Bulan">12 Bulan</option></select>
+        </div>
+      </div>
+      <div class="tbl-scroll"><table><thead><tr><th>Case</th><th>Token Kelompok</th><th>Token Anggota</th><th>Nama Anggota</th><th>Jabatan</th><th>Tanggal</th><th>Besar Pinjaman</th><th>Tenor</th><th>Keperluan</th><th>Aksi</th></tr></thead><tbody id="spBody"></tbody></table></div>
+    </section>
+
+    <section class="panel" data-sec="pieces">
+      <div class="panel-head"><h3>Rekapitulasi Analisis Kepuasan PIECES (Simpan Pinjam)</h3><span class="panel-badge">Rata-rata ${avgP} / 5</span></div>
+      <div class="charts-grid" style="padding:18px;margin-bottom:0">
+        <div class="chart-box" style="padding:0"><canvas id="spPiecesBar"></canvas></div>
+        <div class="chart-box" style="padding:0"><canvas id="spPiecesRadar"></canvas></div>
+      </div>
+      <div class="tbl-scroll">
+        <table>
+          <thead><tr><th>Dimensi PIECES</th><th>STP (1)</th><th>TP (2)</th><th>P (3)</th><th>CP (4)</th><th>SP (5)</th><th>Total Skor</th><th>Rata-rata</th><th>Kesimpulan</th></tr></thead>
+          <tbody>${DATA_PIECES_PINJAMAN.map(d=>`<tr><td><strong>${esc(d.dimensi)}</strong></td><td>${d.stp}</td><td>${d.tp}</td><td>${d.p}</td><td>${d.cp}</td><td>${d.sp}</td><td class="mono">${d.totalSkor}</td><td><span class="pill blue mono">${d.rata.toFixed(2)}</span></td><td><span class="pill green">${esc(d.kesimpulan)}</span></td></tr>`).join("")}</tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel" data-sec="looker">
+      <div class="panel-head"><h3>Dashboard Looker Studio (Simpan Pinjam &amp; Kepuasan)</h3><span class="panel-badge">Looker Studio</span></div>
+      <div class="sub-tabs"><button type="button" class="stab active" onclick="swapSub(this,'lp-1','lpPane')">Looker Pinjaman</button><button type="button" class="stab" onclick="swapSub(this,'lp-2','lpPane')">Looker Kepuasan PIECES</button></div>
+      <div id="lp-1" class="lpPane frame-box" style="height:540px"><iframe src="${esc(L.looker1)}" loading="lazy" allowfullscreen></iframe></div>
+      <div id="lp-2" class="lpPane frame-box" style="height:540px;display:none"><iframe src="${esc(L.looker2)}" loading="lazy" allowfullscreen></iframe></div>
+    </section>`;
+}
+
+/* ================= RENDER TABEL, CHARTS & AKSI ================= */
+function renderKasTable(){
+  const b = $("#kasBody"); if(!b) return;
+  const q = ($("#searchKas")?.value||"").toLowerCase(), f = $("#filterKas")?.value||"all";
+  const rows = state.kas.filter(x => (f==="all" || x.jenis.toLowerCase()===f.toLowerCase()) && (x.nama+x.tok+x.ket).toLowerCase().includes(q));
+  b.innerHTML = rows.length ? rows.map((x,i)=>{
+    const m = x.jenis.toLowerCase().includes("masuk");
+    return `<tr><td>${i+1}</td><td>${esc(x.tgl)}</td><td><span class="code-pill">${esc(x.tok)}</span></td><td><strong>${esc(x.nama)}</strong><br><small style="color:var(--redam)">${esc(x.jab)}</small></td><td><span class="pill ${m?"green":"red"}">${esc(x.jenis)}</span></td><td class="mono" style="color:${m?"var(--sukses-teks)":"var(--bahaya-teks)"}">${rp(x.nom)}</td><td>${esc(x.ket)}</td><td>${x.bukti?`<a href="${esc(x.bukti)}" target="_blank" class="code-pill">Bukti &#8599;</a>`:"-"}</td></tr>`;
+  }).join("") : `<tr><td colspan="8" style="text-align:center;color:var(--redam);padding:20px">Data tidak ditemukan.</td></tr>`;
+}
+
+function renderIuranTables(){
+  const b = $("#iuranBody"); if(b){
+    const q = ($("#searchIuran")?.value||"").toLowerCase(), fk = $("#filterIuranKel")?.value||"ALL", fj = $("#filterIuranJab")?.value||"ALL";
+    const rows = getIuranFiltered().filter(d => (fk==="ALL"||d.token===fk) && (fj==="ALL"||d.jabatan===fj) && (d.nama+d.id+d.alamat).toLowerCase().includes(q));
+    $("#iuranCountBadge").textContent = `${rows.length} Data`;
+    b.innerHTML = rows.length ? rows.map((d,i)=>{const g=grpInfo(d.token);return `<tr><td>${i+1}</td><td><span class="pill blue">${g.icon} ${esc(g.name)}</span></td><td class="mono">${esc(d.id)}</td><td><strong>${esc(d.nama)}</strong></td><td>${esc(d.jabatan)}</td><td>${esc(d.alamat)}</td><td class="mono">${rp(d.tabungan)}</td><td class="mono">${rp(d.iuran)}</td><td class="mono">${rp(d.sukarela)}</td><td>${esc(d.bulan)}</td><td><span class="pill green">&#10003; ${esc(d.status)}</span></td></tr>`;}).join("") : `<tr><td colspan="11" style="text-align:center;padding:20px">Data tidak ditemukan.</td></tr>`;
+  }
+  const kb = $("#kepIuranBody"); if(kb){
+    const q = ($("#searchKepIuran")?.value||"").toLowerCase();
+    const rows = DATA_KEP_IURAN.filter(r => r.nama.toLowerCase().includes(q));
+    kb.innerHTML = rows.map((r,i)=>{const avg=(r.scores.reduce((a,b)=>a+b,0)/12).toFixed(2);return `<tr><td>${i+1}</td><td>${esc(r.ts)}</td><td><strong>${esc(r.nama)}</strong></td><td>${r.scores[0]}/5</td><td>${r.scores[5]}/5</td><td>${r.scores[10]}/5</td><td><strong>${r.scores[11]}/5</strong></td><td><span class="pill green">&#9733; ${avg}</span></td></tr>`;}).join("");
+  }
+}
+
+function renderSpTable(){
+  const b = $("#spBody"); if(!b) return;
+  const q = ($("#searchPinjam")?.value||"").toLowerCase(), fk = $("#filterSpKel")?.value||"", ft = $("#filterSpTenor")?.value||"";
+  const rows = DATA_PINJAMAN.filter(r => (!fk||r.kelompok===fk) && (!ft||r.jangka===ft) && (r.nama+r.kelompok+r.tokenAnggota+r.keperluan).toLowerCase().includes(q));
+  $("#spCountBadge").textContent = `${rows.length} Pinjaman`;
+  b.innerHTML = rows.length ? rows.map(r=>`<tr><td>#${r.caseNo}</td><td><span class="code-pill">${esc(r.kelompok)}</span></td><td class="mono">${esc(r.tokenAnggota)}</td><td><strong>${esc(r.nama)}</strong></td><td>${esc(r.jabatan)}</td><td>${esc(r.tanggal)}</td><td class="mono">${rp(r.besar)}</td><td><span class="pill blue">${esc(r.jangka)}</span></td><td>${esc(r.keperluan)}</td><td><button type="button" class="btn btn-outline" style="padding:5px 10px;font-size:12px" onclick="openAngsuran(${r.caseNo})">Angsuran</button></td></tr>`).join("") : `<tr><td colspan="10" style="text-align:center;padding:20px">Data tidak ditemukan.</td></tr>`;
+}
+
+function initPageCharts(id){
+  if(typeof Chart === "undefined") return;
+  clearCharts();
+  if(id === "kas-kelompok"){
+    const c1 = $("#kasChart"), c2 = $("#piecesKasChart");
+    if(c1){
+      const g = {}; state.kas.forEach(r=>{ g[r.tok]=g[r.tok]||{m:0,k:0}; r.jenis.toLowerCase().includes("masuk")?g[r.tok].m+=r.nom:g[r.tok].k+=r.nom; });
+      const l = Object.keys(g);
+      activeCharts.push(new Chart(c1,{type:"bar",data:{labels:l,datasets:[{label:"Kas Masuk",data:l.map(x=>g[x].m),backgroundColor:"#1d5fd6",borderRadius:6},{label:"Kas Keluar",data:l.map(x=>g[x].k),backgroundColor:"#0ea5e9",borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom"}}}}));
+    }
+    if(c2) activeCharts.push(new Chart(c2,{type:"radar",data:{labels:DIMS,datasets:[{label:"Skor",data:DIMS.map(d=>state.meanDimsKas[d]||0),backgroundColor:"rgba(29,95,214,.22)",borderColor:"#1d5fd6",pointBackgroundColor:"#0ea5e9"}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{r:{min:0,max:5}}}}));
+  }
+  if(id === "iuran-kelompok"){
+    const data = getIuranFiltered(), grp = {};
+    data.forEach(d=>{ if(!grp[d.token]) grp[d.token]={n:grpInfo(d.token).name,t:0,i:0,s:0}; grp[d.token].t+=d.tabungan; grp[d.token].i+=d.iuran; grp[d.token].s+=d.sukarela; });
+    const list = Object.values(grp);
+    if($("#iuranBarChart")) activeCharts.push(new Chart($("#iuranBarChart"),{type:"bar",data:{labels:list.map(x=>x.n),datasets:[{label:"Tabungan",data:list.map(x=>x.t),backgroundColor:"#1d5fd6",borderRadius:5},{label:"Iuran Wajib",data:list.map(x=>x.i),backgroundColor:"#0ea5e9",borderRadius:5},{label:"Sukarela",data:list.map(x=>x.s),backgroundColor:"#3b82f6",borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom"}}}}));
+    if($("#iuranDonutChart")) activeCharts.push(new Chart($("#iuranDonutChart"),{type:"doughnut",data:{labels:["Tabungan","Iuran Wajib","Sukarela"],datasets:[{data:[list.reduce((a,b)=>a+b.t,0),list.reduce((a,b)=>a+b.i,0),list.reduce((a,b)=>a+b.s,0)],backgroundColor:["#1d5fd6","#0ea5e9","#60a5fa"]}]},options:{responsive:true,maintainAspectRatio:false,cutout:"62%",plugins:{legend:{position:"bottom"}}}}));
+    if($("#kepuasanIuranChart")){
+      const means = SURVEY_IURAN_LABELS.map((_,i)=>Number((DATA_KEP_IURAN.reduce((s,r)=>s+r.scores[i],0)/DATA_KEP_IURAN.length).toFixed(2)));
+      activeCharts.push(new Chart($("#kepuasanIuranChart"),{type:"bar",data:{labels:SURVEY_IURAN_LABELS,datasets:[{data:means,backgroundColor:means.map(v=>v>=3.6?"#1d5fd6":v>=3.3?"#0ea5e9":"#93c5fd"),borderRadius:6}]},options:{indexAxis:"y",responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{min:0,max:5}}}}));
+    }
+  }
+  if(id === "simpan-pinjam"){
+    const pk = {}, kp = {}; DATA_PINJAMAN.forEach(r=>{ pk[r.kelompok]=(pk[r.kelompok]||0)+r.besar; kp[r.keperluan]=(kp[r.keperluan]||0)+1; });
+    if($("#spKelChart")) activeCharts.push(new Chart($("#spKelChart"),{type:"bar",data:{labels:Object.keys(pk),datasets:[{label:"Total Pinjaman",data:Object.values(pk),backgroundColor:["#0f3460","#1d5fd6","#0ea5e9","#3b82f6","#60a5fa","#0284c7"],borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}}));
+    if($("#spKepChart")) activeCharts.push(new Chart($("#spKepChart"),{type:"doughnut",data:{labels:Object.keys(kp),datasets:[{data:Object.values(kp),backgroundColor:["#0f3460","#1d5fd6","#0ea5e9","#3b82f6","#60a5fa","#93c5fd"]}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom"}}}}));
+    if($("#spPiecesBar")) activeCharts.push(new Chart($("#spPiecesBar"),{type:"bar",data:{labels:DATA_PIECES_PINJAMAN.map(d=>d.dimensi),datasets:[{data:DATA_PIECES_PINJAMAN.map(d=>d.rata),backgroundColor:"#1d5fd6",borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:0,max:5}}}}));
+    if($("#spPiecesRadar")) activeCharts.push(new Chart($("#spPiecesRadar"),{type:"radar",data:{labels:DATA_PIECES_PINJAMAN.map(d=>d.dimensi),datasets:[{label:"Skor",data:DATA_PIECES_PINJAMAN.map(d=>d.rata),backgroundColor:"rgba(29,95,214,.22)",borderColor:"#1d5fd6",pointBackgroundColor:"#0ea5e9"}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{r:{min:0,max:5,ticks:{stepSize:1}}}}}));
+  }
+}
+
+window.swapSub = (btn, targetId, cls) => {
+  document.querySelectorAll("."+cls).forEach(e => e.style.display="none");
+  btn.parentElement.querySelectorAll(".stab").forEach(b => b.classList.remove("active"));
+  document.getElementById(targetId).style.display="block"; btn.classList.add("active");
+};
+
+window.filterIuranGroup = tok => {
+  const sel = $("#filterIuranKel"); if(sel){ sel.value = tok; renderIuranTables(); $("#iuranTablePanel")?.scrollIntoView({behavior:"smooth"}); }
+};
+
+window.openAngsuran = caseNo => {
+  const it = DATA_PINJAMAN.find(x => x.caseNo === caseNo); if(!it) return;
+  $("#modalTitle").textContent = `Rincian Angsuran — ${it.nama}`;
+  $("#modalSub").textContent = `Case #${it.caseNo} • Kelompok ${it.kelompok} • ${rp(it.besar)} (${it.jangka})`;
+  $("#modalBody").innerHTML = `<p style="font-size:13px;color:var(--redam)">Keperluan: <strong style="color:var(--navy)">${esc(it.keperluan)}</strong> • Tgl: <strong>${esc(it.tanggal)}</strong></p><div class="angsuran-grid">${Array.from({length:12},(_,i)=>`<div class="angsuran-item"><span>Angsuran ${i+1}</span><strong>${it.angsuran[i]?rp(it.angsuran[i]):"-"}</strong></div>`).join("")}</div>`;
+  $("#angsuranModal").classList.add("open");
+};
+window.closeModal = () => $("#angsuranModal").classList.remove("open");
+
+window.downloadKasPiecesXls = () => {
+  const html = `<html><head><meta charset="UTF-8"></head><body><h3>Analisis PIECES Kas POKLAHSAR</h3><table border="1"><tr><th>Dimensi</th><th>Rata-rata</th><th>%</th></tr>${DIMS.map(d=>`<tr><td>${d}</td><td>${(state.meanDimsKas[d]||0).toFixed(2)}</td><td>${(((state.meanDimsKas[d]||0)/5)*100).toFixed(1)}%</td></tr>`).join("")}</table></body></html>`;
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([html],{type:"application/vnd.ms-excel"})); a.download = "Analisis_PIECES_Kas_POKLAHSAR.xls"; a.click();
+};
+window.exportIuranCSV = tipe => {
+  const csv = tipe==="iuran"
+    ? [["Token","Kelompok","ID","Nama","Jabatan","Alamat","Tabungan","Iuran","Sukarela","Bulan","Status"], ...getIuranFiltered().map(d=>[d.token,grpInfo(d.token).name,d.id,d.nama,d.jabatan,d.alamat,d.tabungan,d.iuran,d.sukarela,d.bulan,d.status])].map(r=>r.join(",")).join("\n")
+    : [["Timestamp","Nama",...SURVEY_IURAN_LABELS], ...DATA_KEP_IURAN.map(r=>[r.ts,r.nama,...r.scores])].map(r=>r.join(",")).join("\n");
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8;"})); a.download = tipe==="iuran"?"Rekap_Iuran_POKLAHSAR.csv":"Kepuasan_Iuran_POKLAHSAR.csv"; a.click();
+};
+window.exportPinjamanCSV = () => {
+  const csv = [["Case","Timestamp","Kelompok","Token","Nama","Jabatan","Tanggal","Pinjaman","Tenor","Keperluan"], ...DATA_PINJAMAN.map(r=>[r.caseNo,r.timestamp,r.kelompok,r.tokenAnggota,r.nama,r.jabatan,r.tanggal,r.besar,r.jangka,r.keperluan])].map(r=>r.map(v=>`"${v}"`).join(",")).join("\n");
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8;"})); a.download = "Rekap_Simpan_Pinjam_POKLAHSAR.csv"; a.click();
+};
+
+function render(id){
+  const h = CONFIG.halaman.find(x => x.id === id) || CONFIG.halaman[0];
+  document.title = `${h.judul} | POKLAHSAR — Albert Clodius Vascal`;
+  document.querySelectorAll("[data-id]").forEach(a => a.dataset.id === h.id ? a.setAttribute("aria-current","page") : a.removeAttribute("aria-current"));
+  const body = h.id === "beranda" ? renderBeranda(h) : h.id === "kas-kelompok" ? renderKas(h) : h.id === "iuran-kelompok" ? renderIuran(h) : renderSimpanPinjam(h);
+  $("#app").innerHTML = body + `<footer class="footer"><span><strong>${esc(CONFIG.nama)}</strong> (${esc(CONFIG.nim)}) • Bagian POKLAHSAR</span><span>${esc(CONFIG.regulasi)}</span></footer>`;
+
+  document.querySelectorAll(".vtab").forEach(b => b.addEventListener("click", () => {
+    document.querySelectorAll(".vtab").forEach(x => x.classList.toggle("active", x===b));
+    const m = b.dataset.mode;
+    document.querySelectorAll("[data-sec]").forEach(s => s.classList.toggle("hidden", m!=="all" && s.dataset.sec!==m));
+  }));
+
+  if(h.id === "kas-kelompok"){ renderKasTable(); $("#searchKas")?.addEventListener("input",renderKasTable); $("#filterKas")?.addEventListener("change",renderKasTable); }
+  if(h.id === "iuran-kelompok"){
+    renderIuranTables();
+    $("#searchIuran")?.addEventListener("input",renderIuranTables); $("#filterIuranKel")?.addEventListener("change",renderIuranTables);
+    $("#filterIuranJab")?.addEventListener("change",renderIuranTables); $("#searchKepIuran")?.addEventListener("input",renderIuranTables);
+    $("#toggleTestIuran")?.addEventListener("change", e => { state.includeTestIuran = e.target.checked; render("iuran-kelompok"); });
+  }
+  if(h.id === "simpan-pinjam"){ renderSpTable(); $("#searchPinjam")?.addEventListener("input",renderSpTable); $("#filterSpKel")?.addEventListener("change",renderSpTable); $("#filterSpTenor")?.addEventListener("change",renderSpTable); }
+
+  initPageCharts(h.id);
+  $("#mobileDrawer").classList.remove("open");
+}
+
+function route(){ render(location.hash.slice(1) || "beranda"); }
+$("#dropBtn").addEventListener("click", e => { e.stopPropagation(); $("#webDropdown").classList.toggle("open"); });
+document.addEventListener("click", () => $("#webDropdown").classList.remove("open"));
+$("#burgerBtn").addEventListener("click", () => $("#mobileDrawer").classList.toggle("open"));
+window.addEventListener("hashchange", route);
+
+loadKas(FALLBACK_KAS_CSV, false);
+loadKepuasanKas(FALLBACK_KEP_KAS_CSV);
+buildNav();
+route();
+
+Promise.all([
+  fetch(CONFIG.links.kas.sheetCsv, { cache: "no-store" }).then(r => r.ok ? r.text() : "").catch(() => ""),
+  fetch(CONFIG.links.kas.sheetKepCsv, { cache: "no-store" }).then(r => r.ok ? r.text() : "").catch(() => "")
+]).then(([kTxt, pTxt]) => {
+  let ch = false;
+  if(kTxt && !kTxt.includes("<html") && kTxt.length > 20){ loadKas(kTxt, true); ch = true; }
+  if(pTxt && !pTxt.includes("<html") && pTxt.length > 20){ loadKepuasanKas(pTxt); ch = true; }
+  if(ch) route();
+});
+</script>
+</body>
+</html>
