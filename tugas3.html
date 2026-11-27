@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tugas 3 (Looker Studio &amp; Google Sheet) | Albert Clodius Vascal</title>
+
+    <!-- Google Fonts: Outfit & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-dark: #060913;
+            --bg-card: rgba(15, 22, 40, 0.74);
+            --sunset-coral: #ff7b54;
+            --sunset-gold: #ffb26b;
+            --ocean-blue: #38bdf8;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-glass: rgba(255, 255, 255, 0.1);
+            --border-glow: rgba(255, 178, 107, 0.45);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', 'Segoe UI', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Background Cahaya & Grid */
+        .page-bg {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: -1;
+            background:
+                radial-gradient(circle at 18% 18%, rgba(37, 99, 235, 0.16), transparent 45%),
+                radial-gradient(circle at 82% 28%, rgba(255, 123, 84, 0.14), transparent 45%),
+                radial-gradient(circle at 50% 85%, rgba(56, 189, 248, 0.12), transparent 50%);
+        }
+
+        .page-bg::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+            background-size: 50px 50px;
+            mask-image: radial-gradient(circle at center, black 35%, transparent 85%);
+            -webkit-mask-image: radial-gradient(circle at center, black 35%, transparent 85%);
+        }
+
+        /* Header Glassmorphism */
+        header {
+            background: rgba(6, 9, 19, 0.8);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-bottom: 1px solid var(--border-glass);
+            padding: 15px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #ffffff 25%, var(--sunset-gold) 70%, var(--sunset-coral));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo::before {
+            content: "";
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--sunset-gold), var(--sunset-coral));
+            box-shadow: 0 0 14px var(--sunset-coral);
+            display: inline-block;
+            flex-shrink: 0;
+        }
+
+        nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 0.9rem;
+            padding: 8px 15px;
+            border-radius: 999px;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        nav a:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.07);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        nav a.active {
+            color: #060913;
+            background: linear-gradient(135deg, var(--sunset-gold), var(--sunset-coral));
+            font-weight: 700;
+            box-shadow: 0 4px 20px rgba(255, 123, 84, 0.4);
+        }
+
+        /* Main Container */
+        main {
+            padding: 50px 6% 75px;
+            max-width: 1260px;
+            margin: 0 auto;
+            width: 100%;
+            flex: 1;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 34px;
+        }
+
+        .section-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 16px;
+            border-radius: 999px;
+            background: rgba(56, 189, 248, 0.12);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            color: var(--ocean-blue);
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.4px;
+            margin-bottom: 14px;
+        }
+
+        .section-header h1,
+        .section-header h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(1.9rem, 4.2vw, 2.9rem);
+            font-weight: 800;
+            letter-spacing: -0.8px;
+            margin-bottom: 10px;
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #ffffff 0%, var(--sunset-gold) 45%, var(--sunset-coral) 85%, var(--ocean-blue) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-header p {
+            color: var(--text-muted);
+            font-size: 1.02rem;
+            max-width: 680px;
+            margin: 0 auto;
+        }
+
+        /* 1. BANNER GOOGLE FORM (BUKA DI TAB BARU) */
+        .gform-cta-card {
+            background: linear-gradient(135deg, rgba(255, 123, 84, 0.14), rgba(15, 22, 40, 0.86) 55%, rgba(56, 189, 248, 0.14));
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 178, 107, 0.32);
+            border-radius: 24px;
+            padding: 28px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 42px;
+            box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.55);
+        }
+
+        .gform-cta-left {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            max-width: 680px;
+        }
+
+        .gform-icon {
+            width: 54px;
+            height: 54px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--sunset-gold), var(--sunset-coral));
+            color: #060913;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 10px 25px rgba(255, 123, 84, 0.38);
+        }
+
+        .gform-cta-left h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .gform-cta-left p {
+            color: #cbd5e1;
+            font-size: 0.92rem;
+        }
+
+        .cta-newtab-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 26px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--sunset-gold), var(--sunset-coral));
+            color: #060913;
+            font-weight: 700;
+            font-size: 0.96rem;
+            text-decoration: none;
+            box-shadow: 0 10px 30px -6px rgba(255, 123, 84, 0.55);
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .cta-newtab-btn:hover {
+            transform: translateY(-3px);
+            background: linear-gradient(135deg, #ffc285, #ff8d6b);
+            box-shadow: 0 16px 38px -6px rgba(255, 123, 84, 0.75);
+        }
+
+        /* 2. SECTION LOOKER STUDIO */
+        .looker-panel {
+            background: var(--bg-card);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(56, 189, 248, 0.28);
+            border-radius: 26px;
+            padding: 24px;
+            margin-bottom: 52px;
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.65);
+        }
+
+        .panel-header-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid var(--border-glass);
+            margin-bottom: 20px;
+        }
+
+        .panel-title-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .panel-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(255, 123, 84, 0.18));
+            border: 1px solid rgba(56, 189, 248, 0.32);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--ocean-blue);
+        }
+
+        .panel-title-group h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.35rem;
+            font-weight: 700;
+        }
+
+        .panel-title-group p {
+            font-size: 0.86rem;
+            color: var(--text-muted);
+        }
+
+        .panel-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .status-pill {
+            padding: 6px 14px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: rgba(34, 197, 94, 0.14);
+            border: 1px solid rgba(34, 197, 94, 0.35);
+            color: #4ade80;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .status-pill .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #22c55e;
+            box-shadow: 0 0 8px #22c55e;
+        }
+
+        .looker-frame-box {
+            position: relative;
+            width: 100%;
+            min-height: 680px;
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid var(--border-glass);
+            background: #080d1a;
+        }
+
+        .iframe-loader {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: #0b1120;
+            color: var(--text-muted);
+            font-size: 0.94rem;
+            z-index: 1;
+            transition: opacity 0.4s ease;
+        }
+
+        .spinner {
+            width: 36px;
+            height: 36px;
+            border: 3px solid rgba(56, 189, 248, 0.2);
+            border-top-color: var(--ocean-blue);
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .looker-frame-box iframe {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            height: 720px;
+            border: none;
+            display: block;
+            background: #ffffff;
+        }
+
+        .looker-note {
+            margin-top: 14px;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        /* 3. SECTION SAJIAN DATA GOOGLE SHEET LANGSUNG */
+        .sheet-panel {
+            background: var(--bg-card);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid var(--border-glass);
+            border-radius: 26px;
+            padding: 24px;
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.65);
+        }
+
+        .panel-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 14px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid var(--border-glass);
+            margin-bottom: 18px;
+        }
+
+        .panel-title-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(6, 9, 19, 0.7);
+            padding: 9px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border-glass);
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--sunset-gold);
+        }
+
+        .toolbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .mini-btn {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 0.83rem;
+            font-weight: 600;
+            padding: 9px 14px;
+            border-radius: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .mini-btn:hover {
+            border-color: var(--sunset-gold);
+            background: rgba(255, 178, 107, 0.14);
+        }
+
+        .sync-banner {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 10px 16px;
+            border-radius: 12px;
+            background: rgba(56, 189, 248, 0.08);
+            border: 1px solid rgba(56, 189, 248, 0.22);
+            font-size: 0.84rem;
+            color: #cbd5e1;
+            margin-bottom: 18px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #22c55e;
+            box-shadow: 0 0 10px #22c55e;
+            flex-shrink: 0;
+        }
+
+        .sheet-embed-wrap {
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border-glass);
+            background: #ffffff;
+            min-height: 640px;
+        }
+
+        .sheet-embed-wrap iframe {
+            width: 100%;
+            height: 650px;
+            border: none;
+            display: block;
+            background: #ffffff;
+        }
+
+        /* Navigasi Bawah */
+        .bottom-actions {
+            margin-top: 42px;
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 13px 24px;
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 14px;
+            font-weight: 600;
+            font-size: 0.94rem;
+            border: 1px solid var(--border-glass);
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            border-color: var(--border-glow);
+            background: rgba(255, 123, 84, 0.14);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--sunset-gold), var(--sunset-coral));
+            color: #060913;
+            font-weight: 700;
+            border: none;
+            box-shadow: 0 10px 28px -6px rgba(255, 123, 84, 0.5);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #ffc285, #ff8d6b);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 26px 20px;
+            background: #04060e;
+            border-top: 1px solid var(--border-glass);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        footer span {
+            color: var(--sunset-gold);
+            font-weight: 600;
+        }
+
+        /* Responsif Mobile */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 12px;
+                padding: 14px 5%;
+            }
+            nav a {
+                font-size: 0.83rem;
+                padding: 6px 12px;
+            }
+            main {
+                padding: 32px 4% 55px;
+            }
+            .gform-cta-card {
+                padding: 22px;
+            }
+            .looker-panel,
+            .sheet-panel {
+                padding: 14px;
+            }
+            .looker-frame-box {
+                min-height: 540px;
+            }
+            .looker-frame-box iframe {
+                height: 560px;
+            }
+            .toolbar-right {
+                width: 100%;
+            }
+            .sheet-embed-wrap,
+            .sheet-embed-wrap iframe {
+                min-height: 520px;
+                height: 520px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page-bg"></div>
+
+    <header class="gsap-header">
+        <a href="index.html" class="logo">Albert Clodius Vascal</a>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="biodata.html">Biodata</a>
+            <a href="tugas1.html">Tugas 1</a>
+            <a href="tugas2.html">Tugas 2</a>
+            <a href="tugas3.html" class="active">Tugas 3</a>
+            <a href="tugas4.html">Tugas 4</a>
+            <a href="tugasakhir.html">Tugas Akhir</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="section-header gsap-title">
+            <div class="section-tag">Tugas 3 • Survei Tingkat Kepuasan DANA</div>
+            <h1>Looker Studio &amp; <span class="text-gradient">Sajian Data Google Sheet</span></h1>
+            <p>Kuesioner tingkat kepuasan pengguna aplikasi DANA beserta visualisasi Looker Studio dan tampilan langsung Google Spreadsheet.</p>
+        </div>
+
+        <!-- ==================== 1. GOOGLE FORM (BUKA DI TAB BARU) ==================== -->
+        <section class="gform-cta-card gsap-cta">
+            <div class="gform-cta-left">
+                <div class="gform-icon">
+                    <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                </div>
+                <div>
+                    <h2>Kuesioner Tingkat Kepuasan DANA (Google Form)</h2>
+                    <p>Klik tombol di samping untuk mengisi formulir survei di <strong>tab baru</strong> browser Anda.</p>
+                </div>
+            </div>
+
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSfCoenryEumcvsndYTU1fCOGzJtm2keU53Wp49lbOuIH0UDDQ/viewform?usp=sharing&ouid=10753544133057752359"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="cta-newtab-btn">
+                Isi Google Form (Tab Baru) ↗
+            </a>
+        </section>
+
+        <!-- ==================== 2. VISUALISASI DATA LOOKER STUDIO ==================== -->
+        <section class="looker-panel gsap-looker">
+            <div class="panel-header-bar">
+                <div class="panel-title-group">
+                    <div class="panel-icon">
+                        <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                    </div>
+                    <div>
+                        <h2>Visualisasi Data Looker Studio</h2>
+                        <p>Dashboard interaktif analisis tingkat kepuasan pengguna aplikasi DANA.</p>
+                    </div>
+                </div>
+
+                <div class="panel-header-actions">
+                    <span class="status-pill"><span class="dot"></span> Terhubung • Looker Studio</span>
+                    <button type="button" class="mini-btn" onclick="reloadLooker()">↻ Muat Ulang</button>
+                    <a href="https://lookerstudio.google.com/reporting/25d2b0e1-68bb-4b4f-9ac2-82f881e96f97"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       class="mini-btn">
+                        Buka Fullscreen ↗
+                    </a>
+                </div>
+            </div>
+
+            <div class="looker-frame-box">
+                <div id="lookerLoader" class="iframe-loader">
+                    <div class="spinner"></div>
+                    <span>Memuat Dashboard Looker Studio…</span>
+                </div>
+
+                <!-- Looker Studio Embed -->
+                <iframe
+                    id="lookerIframe"
+                    src="https://lookerstudio.google.com/embed/reporting/25d2b0e1-68bb-4b4f-9ac2-82f881e96f97"
+                    allowfullscreen
+                    sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+                    onload="hideLookerLoader()"
+                    title="Visualisasi Data Looker Studio Tugas 3">
+                </iframe>
+            </div>
+
+            <div class="looker-note">
+                <span>💡 Jika grafik belum tampil di kotak di atas, pastikan di Looker Studio menu <strong>File → Sematkan laporan (Embed report)</strong> sudah diaktifkan &amp; akses berbagi disetel ke publik.</span>
+            </div>
+        </section>
+
+        <!-- ==================== 3. SAJIAN DATA GOOGLE SHEET LANGSUNG ==================== -->
+        <section id="data-sheet" class="gsap-sheet">
+            <div class="section-header" style="margin-bottom: 26px;">
+                <span class="section-tag">Data Tingkat Kepuasan DANA</span>
+                <h2>Sajian Data <span class="text-gradient">Google Sheet</span></h2>
+                <p>Tampilan langsung Google Spreadsheet hasil survei tingkat kepuasan pengguna aplikasi DANA secara real-time.</p>
+            </div>
+
+            <div class="sheet-panel">
+                <div class="panel-toolbar">
+                    <div class="panel-title-badge">
+                        📑 Tampilan Langsung Google Spreadsheet
+                    </div>
+
+                    <div class="toolbar-right">
+                        <button type="button" class="mini-btn" onclick="reloadSheetIframe()">↻ Segarkan Data</button>
+                        <a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vQb2MwM6RyIdFocfAwykTxjKmQxMumOIY1Vunw55D0wpMFxOCBZY5LRPc8FnYi7h5Hk6W4eh-LuYTI2/pubhtml"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           class="mini-btn">
+                            Buka Sheet ↗
+                        </a>
+                    </div>
+                </div>
+
+                <div class="sync-banner">
+                    <span class="status-dot"></span>
+                    <span>Terhubung langsung ke Google Spreadsheet survei kepuasan DANA — Data otomatis diperbarui.</span>
+                </div>
+
+                <!-- TAMPILAN LANGSUNG SPREADSHEET -->
+                <div class="sheet-embed-wrap">
+                    <iframe
+                        id="sheetIframe"
+                        src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQb2MwM6RyIdFocfAwykTxjKmQxMumOIY1Vunw55D0wpMFxOCBZY5LRPc8FnYi7h5Hk6W4eh-LuYTI2/pubhtml?widget=true&amp;headers=false"
+                        title="Sajian Data Google Spreadsheet Tugas 3"
+                        loading="lazy">
+                    </iframe>
+                </div>
+            </div>
+        </section>
+
+        <div class="bottom-actions">
+            <a href="tugas2.html" class="btn">← Kembali ke Tugas 2</a>
+            <a href="index.html" class="btn">Home</a>
+            <a href="tugas4.html" class="btn btn-primary">Lanjut ke Tugas 4 →</a>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 <span>Albert Clodius Vascal</span>. Tugas Sistem Informasi Manajemen Perikanan.</p>
+    </footer>
+
+    <!-- GSAP CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script>
+        const LOOKER_STUDIO_URL = "https://datastudio.google.com/reporting/25d2b0e1-68bb-4b4f-9ac2-82f881e96f97";
+
+        function hideLookerLoader() {
+            const loader = document.getElementById("lookerLoader");
+            if (loader) {
+                loader.style.opacity = "0";
+                setTimeout(() => { loader.style.display = "none"; }, 400);
+            }
+        }
+
+        function reloadLooker() {
+            const loader = document.getElementById("lookerLoader");
+            const iframe = document.getElementById("lookerIframe");
+            if (loader) {
+                loader.style.display = "flex";
+                loader.style.opacity = "1";
+            }
+            if (iframe) {
+                iframe.src = iframe.src;
+            }
+        }
+
+        function initLookerStudio() {
+            const rawUrl = (LOOKER_STUDIO_URL || "").trim();
+            if (!rawUrl) return;
+            const embedUrl = rawUrl.replace(
+                /https?:\/\/(datastudio|lookerstudio)\.google\.com\/reporting\//i,
+                "https://lookerstudio.google.com/embed/reporting/"
+            );
+            document.getElementById("lookerIframe").src = embedUrl;
+        }
+
+        function reloadSheetIframe() {
+            const iframe = document.getElementById("sheetIframe");
+            if (iframe) {
+                iframe.src = iframe.src;
+            }
+        }
+
+        initLookerStudio();
+
+        if (typeof gsap !== "undefined") {
+            const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+            tl.from(".gsap-header", { y: -40, opacity: 0, duration: 0.65 })
+              .from(".gsap-title", { y: 25, opacity: 0, duration: 0.7 }, "-=0.35")
+              .from(".gsap-cta", { y: 22, opacity: 0, duration: 0.65 }, "-=0.35")
+              .from(".gsap-looker", { y: 25, opacity: 0, duration: 0.7 }, "-=0.35")
+              .from(".gsap-sheet", { y: 25, opacity: 0, duration: 0.7 }, "-=0.35");
+        }
+    </script>
+</body>
+</html>
