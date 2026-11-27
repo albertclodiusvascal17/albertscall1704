@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tugas 4 — Sistem Keuangan POKLAHSAR | Albert Clodius Vascal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#091e42;--biru-gelap:#0f3460;--biru:#1d5fd6;--biru-cerah:#3b82f6;--cyan:#0ea5e9;
+  --es:#f3f8ff;--es-2:#e6f0ff;--putih:#fff;--garis:#d6e4f7;--teks:#10233e;--redam:#5a7191;
+  --sukses-bg:#e7f8ef;--sukses-teks:#0f7a44;--kuning-bg:#fef3c7;--kuning-teks:#b45309;
+  --bayangan:0 10px 28px -10px rgba(15,52,96,.12);--radius:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;
+  background:radial-gradient(circle at 10% 0%,#dcebff 0%,transparent 40%),var(--es);
+  color:var(--teks);line-height:1.6;min-height:100vh;
+}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+.mono{font-family:'JetBrains Mono',monospace;font-weight:700}
+
+/* Top Navbar */
+.topbar{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--garis)}
+.topbar-in{max-width:1280px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.brand-logo{width:40px;height:40px;border-radius:11px;flex-shrink:0;background:linear-gradient(135deg,var(--biru-gelap),var(--biru-cerah));color:#fff;display:grid;place-items:center;font-weight:800;font-size:13px}
+.brand-title{font-weight:800;font-size:14.5px;color:var(--navy);white-space:nowrap}
+.brand-sub{font-size:11.5px;color:var(--redam);white-space:nowrap}
+.nav-pills{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.nav-link{padding:8px 13px;border-radius:999px;font-size:13px;font-weight:700;color:var(--redam);transition:.2s}
+.nav-link:hover{background:var(--es-2);color:var(--biru)}
+.nav-link[aria-current="page"]{background:linear-gradient(135deg,var(--biru),var(--biru-cerah));color:#fff}
+
+.burger{display:none;width:40px;height:40px;border-radius:10px;border:1px solid var(--garis);background:#fff;font-size:18px;place-items:center}
+.mobile-drawer{display:none;background:#fff;border-top:1px solid var(--garis);padding:12px 20px}
+.mobile-drawer.open{display:block}
+.mobile-drawer a{display:block;padding:9px 12px;border-radius:8px;font-size:13.5px;font-weight:600;margin-bottom:4px}
+.mobile-drawer a[aria-current="page"]{background:var(--biru);color:#fff}
+
+/* Layout & Hero */
+.wrap{max-width:1280px;margin:0 auto;padding:24px 20px 56px}
+.hero{background:linear-gradient(125deg,var(--navy) 0%,var(--biru-gelap) 48%,var(--biru) 100%);color:#fff;border-radius:20px;padding:34px clamp(18px,4vw,42px);margin-bottom:24px;box-shadow:0 18px 40px -16px rgba(15,52,96,.42)}
+.hero-grid{display:grid;grid-template-columns:1.4fr .9fr;gap:22px;align-items:center}
+.hero-chip{display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);padding:4px 12px;border-radius:999px;font-size:12px;font-weight:600;color:#dbeafe;margin-bottom:12px}
+.hero h1{font-size:clamp(22px,3vw,33px);font-weight:800;line-height:1.2;margin-bottom:8px}
+.hero p{color:#d0e2ff;font-size:14.5px;margin-bottom:18px}
+.hero-actions{display:flex;flex-wrap:wrap;gap:10px}
+.hero-id{background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.22);border-radius:14px;padding:18px}
+.hero-id small{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#93c5fd;font-weight:700}
+.hero-id h2{font-size:17.5px;font-weight:800;margin:4px 0 12px}
+.hero-id-row{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-top:1px solid rgba(255,255,255,.15);color:#dbeafe}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 16px;border-radius:10px;font-size:13.5px;font-weight:700;border:1.5px solid transparent;transition:.2s}
+.btn-cyan{background:var(--cyan);color:#06213e}
+.btn-glass{background:rgba(255,255,255,.14);color:#fff;border-color:rgba(255,255,255,.28)}
+.btn-primary{background:linear-gradient(135deg,var(--biru),var(--biru-cerah));color:#fff}
+.btn-sky{background:linear-gradient(135deg,#0284c7,#0ea5e9);color:#fff}
+.btn-outline{background:#fff;color:var(--biru-gelap);border-color:var(--garis)}
+.btn-outline:hover{background:var(--es-2)}
+
+.sec-head{margin:28px 0 14px;display:flex;justify-content:space-between;align-items:end;flex-wrap:wrap;gap:10px}
+.sec-head h2{font-size:19px;font-weight:800;color:var(--navy)}
+.sec-head p{font-size:13px;color:var(--redam)}
+
+.mod-tag{font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;background:var(--sukses-bg);color:var(--sukses-teks);border:1px solid #a7f3d0;display:inline-block}
+
+.mod-banner{background:linear-gradient(135deg,#fff 0%,#eaf2ff 100%);border:1px solid var(--garis);border-radius:18px;padding:24px;margin-bottom:20px;box-shadow:var(--bayangan)}
+.mod-banner h1{font-size:clamp(22px,3vw,28px);font-weight:800;color:var(--navy);margin:6px 0}
+.mod-banner p{color:var(--redam);font-size:14px;margin-bottom:16px;max-width:74ch}
+.aksi{display:flex;flex-wrap:wrap;gap:10px}
+
+.view-tabs{display:inline-flex;flex-wrap:wrap;gap:6px;background:#fff;border:1px solid var(--garis);padding:6px;border-radius:12px;margin-bottom:20px}
+.vtab{padding:8px 14px;border-radius:9px;border:0;background:transparent;font-size:13px;font-weight:700;color:var(--redam)}
+.vtab.active{background:var(--biru);color:#fff}
+
+.panel{background:#fff;border:1px solid var(--garis);border-radius:var(--radius);overflow:hidden;box-shadow:var(--bayangan);margin-bottom:20px}
+.panel.hidden{display:none}
+.panel-head{padding:14px 18px;background:linear-gradient(90deg,#f8fbff,#eef5ff);border-bottom:1px solid var(--garis);display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}
+.panel-head h3{font-size:15px;font-weight:800;color:var(--navy)}
+.panel-badge{font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:999px;background:#dbeafe;color:var(--biru-gelap)}
+.panel-badge.wait{background:var(--kuning-bg);color:var(--kuning-teks)}
+.panel-badge.live{background:var(--sukses-bg);color:var(--sukses-teks)}
+
+.frame-box{width:100%;background:#fff}
+.frame-box iframe{display:block;width:100%;height:100%;border:0}
+
+.placeholder-box{
+  min-height:260px;
+  padding:36px 24px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  gap:10px;
+  background:repeating-linear-gradient(-45deg,#fafcff,#fafcff 12px,#f3f8ff 12px,#f3f8ff 24px);
+}
+.placeholder-icon{
+  width:52px;height:52px;border-radius:14px;
+  background:var(--es-2);color:var(--biru);
+  display:grid;place-items:center;font-size:22px;
+  border:1px solid #c7ddff;
+}
+.placeholder-box h4{font-size:16px;font-weight:800;color:var(--navy)}
+.placeholder-box p{font-size:13.5px;color:var(--redam);max-width:520px}
+.placeholder-box code{
+  background:#e6f0ff;color:var(--biru-gelap);
+  padding:5px 12px;border-radius:8px;font-size:12px;
+  font-family:'JetBrains Mono',monospace;border:1px solid #c7ddff;
+}
+
+.footer{margin-top:30px;padding-top:18px;border-top:1px solid var(--garis);display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;font-size:12.5px;color:var(--redam)}
+
+@media(max-width:960px){.hero-grid{grid-template-columns:1fr}}
+@media(max-width:760px){.nav-pills{display:none}.burger{display:grid}.aksi .btn{width:100%}}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <a href="#beranda" class="brand">
+      <div class="brand-logo">ACV</div>
+      <div>
+        <div class="brand-title">Sistem Keuangan POKLAHSAR</div>
+        <div class="brand-sub">2410715310010 • Albert Clodius Vascal</div>
+      </div>
+    </a>
+    <nav class="nav-pills" id="navPills"></nav>
+    <button type="button" class="burger" id="burgerBtn">&#9776;</button>
+  </div>
+  <div class="mobile-drawer" id="mobileDrawer"></div>
+</header>
+
+<main class="wrap" id="app"></main>
+
+<script>
+const CONFIG = {
+  nama: "ALBERT CLODIUS VASCAL",
+  nim: "2410715310010",
+  regulasi: "PERKA BRSDM Nomor 4/PER-BRSDM/2019",
+  links: {
+    kas: {
+      // ==========================================================
+      // LINK KAS KELOMPOK:
+      // ==========================================================
+      formUrl: "https://docs.google.com/forms/d/e/1FAIpQLScv3ApLkWcsUBXHGrfZhKplgrO7g2P6B2ZTOhwEcK1Q56dYjA/viewform?usp=publish-editor",
+      formEmbed: "https://docs.google.com/forms/d/e/1FAIpQLScv3ApLkWcsUBXHGrfZhKplgrO7g2P6B2ZTOhwEcK1Q56dYjA/viewform?embedded=true",
+      sheetUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRI8VzwCcsZ7PH0t1H-J7vl1lYKAZ2K2mAIugLs5R8NhHahdyDBVZbwJrOAO9TjxL1GOz6X7VCceHo2/pubhtml",
+      sheetEmbed: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRI8VzwCcsZ7PH0t1H-J7vl1lYKAZ2K2mAIugLs5R8NhHahdyDBVZbwJrOAO9TjxL1GOz6X7VCceHo2/pubhtml?widget=true&headers=false",
+      lookerUrl: "",   // Link Looker Studio Kas (opsional, untuk buka fullscreen)
+      lookerEmbed: "", // Link Embed Looker Studio Kas (/embed/reporting/...)
+
+      // ==========================================================
+      // LINK TINGKAT KEPUASAN KELOMPOK (KAS):
+      // ==========================================================
+      formKepUrl: "https://docs.google.com/forms/d/e/1FAIpQLScv3ApLkWcsUBXHGrfZhKplgrO7g2P6B2ZTOhwEcK1Q56dYjA/viewform?usp=publish-editor",
+      formKepEmbed: "https://docs.google.com/forms/d/e/1FAIpQLScv3ApLkWcsUBXHGrfZhKplgrO7g2P6B2ZTOhwEcK1Q56dYjA/viewform?embedded=true",
+      sheetKepUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRI8VzwCcsZ7PH0t1H-J7vl1lYKAZ2K2mAIugLs5R8NhHahdyDBVZbwJrOAO9TjxL1GOz6X7VCceHo2/pubhtml",
+      sheetKepEmbed: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRI8VzwCcsZ7PH0t1H-J7vl1lYKAZ2K2mAIugLs5R8NhHahdyDBVZbwJrOAO9TjxL1GOz6X7VCceHo2/pubhtml?widget=true&headers=false"
+    },
+    iuran: {
+      // ==========================================================
+      // LINK IURAN & TABUNGAN KELOMPOK:
+      // ==========================================================
+      formUrl: "https://docs.google.com/forms/d/e/1FAIpQLSfajATHnjxz7tPTuEDh0Pul1mtGLlfzI_yPOhvHlsxALnlC2g/viewform?usp=publish-editor",
+      formEmbed: "https://docs.google.com/forms/d/e/1FAIpQLSfajATHnjxz7tPTuEDh0Pul1mtGLlfzI_yPOhvHlsxALnlC2g/viewform?embedded=true",
+      sheetUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQiV3P8Vv_Z2paaTtGa2eN36jjHko7_nP5Oxkr6iyCVogE1AWITcvb294E-8gCs-NSeumjQId3qtiMR/pubhtml",
+      sheetEmbed: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQiV3P8Vv_Z2paaTtGa2eN36jjHko7_nP5Oxkr6iyCVogE1AWITcvb294E-8gCs-NSeumjQId3qtiMR/pubhtml?widget=true&headers=false",
+      lookerUrl: "",   // Link Looker Studio Iuran (opsional, untuk buka fullscreen)
+      lookerEmbed: "", // Link Embed Looker Studio Iuran (/embed/reporting/...)
+
+      // ==========================================================
+      // LINK TINGKAT KEPUASAN KELOMPOK (IURAN):
+      // ==========================================================
+      formKepUrl: "https://docs.google.com/forms/d/e/1FAIpQLScbrAsLzwIsf4_PPJY9n00V6gcoPVTQr7b7XBk_TpdXbZdgsg/viewform?usp=publish-editor",
+      formKepEmbed: "https://docs.google.com/forms/d/e/1FAIpQLScbrAsLzwIsf4_PPJY9n00V6gcoPVTQr7b7XBk_TpdXbZdgsg/viewform?embedded=true",
+      sheetKepUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRHsCkxZ1UszslNJ8swuhk9K-TFAmX55B_PbrPb7k1auNOGK5gGRlaQ7xgqRqRqPpEMXoQnWzXPTmqL/pubhtml",
+      sheetKepEmbed: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRHsCkxZ1UszslNJ8swuhk9K-TFAmX55B_PbrPb7k1auNOGK5gGRlaQ7xgqRqRqPpEMXoQnWzXPTmqL/pubhtml?widget=true&headers=false"
+    },
+    pinjam: {
+      // ==========================================================
+      // LINK SIMPAN PINJAM ANGGOTA:
+      // ==========================================================
+      formUrl: "https://docs.google.com/forms/d/e/1FAIpQLSemthmPu9vMcx0bDufjlWMATY37BdpSE8vWHKsghZ_yBZoezw/viewform?usp=sharing&ouid=107535441330577523591",
+      formEmbed: "https://docs.google.com/forms/d/e/1FAIpQLSemthmPu9vMcx0bDufjlWMATY37BdpSE8vWHKsghZ_yBZoezw/viewform?embedded=true",
+      sheetUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRfNoSYEWVbX6mXJlm3covwT3ywYnJgxbvYENXFjBVm_akodrkOHJZI2rzJWHtqBIa7otlCpLHulgxc/pubhtml",
+      sheetEmbed: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRfNoSYEWVbX6mXJlm3covwT3ywYnJgxbvYENXFjBVm_akodrkOHJZI2rzJWHtqBIa7otlCpLHulgxc/pubhtml?widget=true&headers=false",
+      lookerUrl: "",   // Link Looker Studio Simpan Pinjam (opsional, untuk buka fullscreen)
+      lookerEmbed: "", // Link Embed Looker Studio Simpan Pinjam (/embed/reporting/...)
+
+      // ==========================================================
+      // LINK TINGKAT KEPUASAN SIMPAN PINJAM ANGGOTA:
+      // ==========================================================
+      formKepUrl: "https://docs.google.com/forms/d/e/1FAIpQLSeOCXcW0yavkw3KkzYRCXHDv5RdWoH7o4TwSbQudW8Xibb1lQ/viewform?usp=sharing&ouid=107535441330577523591",
+      formKepEmbed: "https://docs.google.com/forms/d/e/1FAIpQLSeOCXcW0yavkw3KkzYRCXHDv5RdWoH7o4TwSbQudW8Xibb1lQ/viewform?embedded=true",
+      sheetKepUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vTPHoN5tMER3ChletRgQHVts4nzpzAQglqV0Ix5b-SM6FhR9tgy_r-kQVro2W5m27Jim2T8QLB_las5/pubhtml",
+      sheetKepEmbed: "https://docs.google.com/spreadsheets/d/e/2PACX-1vTPHoN5tMER3ChletRgQHVts4nzpzAQglqV0Ix5b-SM6FhR9tgy_r-kQVro2W5m27Jim2T8QLB_las5/pubhtml?widget=true&headers=false"
+    }
+  },
+  halaman: [
+    { id: "beranda", nav: "Beranda", judul: "Dashboard Keuangan POKLAHSAR", desc: "Portal Sistem Informasi Administrasi Keuangan POKLAHSAR terintegrasi: Kas Kelompok, Iuran Kelompok, dan Simpan Pinjam Kelompok." },
+    { id: "kas-kelompok", nav: "Kas Kelompok", judul: "1. Kas Kelompok", desc: "Pengelolaan kas kelompok melalui Google Form, sajian langsung Google Spreadsheet, visualisasi data Looker Studio, serta formulir & data tingkat kepuasan kelompok." },
+    { id: "iuran-kelompok", nav: "Iuran Kelompok", judul: "2. Iuran & Tabungan Kelompok", desc: "Pengelolaan iuran dan tabungan kelompok melalui Google Form, sajian langsung Google Spreadsheet, visualisasi data Looker Studio, serta formulir & data tingkat kepuasan kelompok." },
+    { id: "simpan-pinjam", nav: "Simpan Pinjam", judul: "3. Simpan Pinjam Anggota", desc: "Pengelolaan simpan pinjam anggota melalui Google Form, sajian langsung Google Spreadsheet, visualisasi data Looker Studio, serta formulir & data tingkat kepuasan anggota." }
+  ]
+};
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function buildNav(){
+  $("#navPills").innerHTML = CONFIG.halaman.map(h => `<a href="#${h.id}" class="nav-link" data-id="${h.id}">${esc(h.nav)}</a>`).join("");
+  $("#mobileDrawer").innerHTML = CONFIG.halaman.map(h => `<a href="#${h.id}" data-id="${h.id}">${esc(h.judul)}</a>`).join("");
+}
+
+/* ================= HALAMAN BERANDA ================= */
+function renderBeranda(h){
+  return `
+    <section class="hero">
+      <div class="hero-grid">
+        <div>
+          <span class="hero-chip">Tugas 4 • ${esc(CONFIG.regulasi)}</span>
+          <h1>${esc(h.judul)}</h1>
+          <p>${esc(h.desc)}</p>
+          <div class="hero-actions">
+            <a href="#kas-kelompok" class="btn btn-cyan">Kas Kelompok &rarr;</a>
+            <a href="#iuran-kelompok" class="btn btn-glass">Iuran Kelompok &rarr;</a>
+            <a href="#simpan-pinjam" class="btn btn-glass">Simpan Pinjam &rarr;</a>
+          </div>
+        </div>
+        <aside class="hero-id">
+          <small>Identitas Pengembang</small>
+          <h2>${esc(CONFIG.nama)}</h2>
+          <div class="hero-id-row"><span>NIM</span><span>${esc(CONFIG.nim)}</span></div>
+          <div class="hero-id-row"><span>Bagian</span><span>POKLAHSAR</span></div>
+          <div class="hero-id-row"><span>Subsistem Aktif</span><span>Kas, Iuran &amp; Simpan Pinjam</span></div>
+        </aside>
+      </div>
+    </section>`;
+}
+
+/* ================= HELPER PANEL EMBED / PLACEHOLDER ================= */
+function renderModulePanel({ sec, title, badge, url, embedUrl, height, openLabel, placeholderHint, iframeId, configKey }){
+  const hasEmbed = Boolean(embedUrl && embedUrl.trim());
+  const hasUrl = Boolean(url && url.trim());
+  return `
+    <section class="panel" data-sec="${esc(sec)}">
+      <div class="panel-head">
+        <h3>${esc(title)}</h3>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span class="panel-badge ${hasEmbed ? "live" : "wait"}">${hasEmbed ? esc(badge) : "Menunggu Link"}</span>
+          ${hasEmbed && iframeId ? `<button type="button" class="btn btn-outline" style="padding:5px 11px;font-size:12px" onclick="reloadFrame('${esc(iframeId)}')">&#8635; Muat Ulang</button>` : ""}
+          ${hasUrl ? `<a href="${esc(url)}" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="padding:5px 11px;font-size:12px">${esc(openLabel)} &#8599;</a>` : ""}
+        </div>
+      </div>
+      ${hasEmbed ? `
+        <div class="frame-box" style="height:${height}px">
+          <iframe id="${esc(iframeId || "")}" src="${esc(embedUrl)}" loading="lazy" allowfullscreen title="${esc(title)}"></iframe>
+        </div>
+      ` : `
+        <div class="placeholder-box">
+          <div class="placeholder-icon">&#128279;</div>
+          <h4>Tempat ${esc(title)}</h4>
+          <p>${esc(placeholderHint)}</p>
+          <code>Tempel link di CONFIG.links.${esc(configKey)} pada tugas4.html</code>
+        </div>
+      `}
+    </section>`;
+}
+
+/* ================= 1. MODUL KAS KELOMPOK ================= */
+function renderKas(h){
+  const L = CONFIG.links.kas;
+  return `
+    <section class="mod-banner">
+      <span class="mod-tag">${esc(CONFIG.regulasi)} • Kas Kelompok</span>
+      <h1>${esc(h.judul)}</h1>
+      <p>${esc(h.desc)}</p>
+      <div class="aksi">
+        ${L.formUrl ? `<a href="${esc(L.formUrl)}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Buka Google Form Kas &#8599;</a>` : ""}
+        ${L.sheetUrl ? `<a href="${esc(L.sheetUrl)}" target="_blank" rel="noopener noreferrer" class="btn btn-outline">Buka Spreadsheet Kas &#8599;</a>` : ""}
+        <a href="${esc(L.formKepUrl)}" target="_blank" rel="noopener noreferrer" class="btn btn-sky">Isi GForm Tingkat Kepuasan &#8599;</a>
+        <a href="${esc(L.sheetKepUrl)}" target="_blank" rel="noopener noreferrer" class="btn btn-outline">Buka Spreadsheet Kepuasan &#8599;</a>
+      </div>
+    </section>
+
+    <div class="view-tabs">
+      <button type="button" class="vtab active" data-mode="all">Tampilan Lengkap</button>
+      <button type="button" class="vtab" data-mode="form-kas">GForm Kas</button>
+      <button type="button" class="vtab" data-mode="sheet-kas">Spreadsheet Kas</button>
+      <button type="button" class="vtab" data-mode="looker-kas">Looker Studio</button>
+      <button type="button" class="vtab" data-mode="form-kepuasan">GForm Kepuasan</button>
+      <button type="button" class="vtab" data-mode="sheet-kepuasan">Spreadsheet Kepuasan</button>
+    </div>
+
+    ${renderModulePanel({
+      sec: "form-kas",
+      title: "1. Google Form Kas Kelompok",
+      badge: "Terhubung • Google Form",
+      url: L.formUrl,
+      embedUrl: L.formEmbed,
+      height: 580,
+      openLabel: "Buka Form",
+      iframeId: "kasFormFrame",
+      configKey: "kas",
+      placeholderHint: "Tempat ini disiapkan untuk menampilkan Google Form Kas Kelompok secara langsung."
+    })}
+
+    ${renderModulePanel({
+      sec: "sheet-kas",
+      title: "2. Spreadsheet Kas Kelompok (Live)",
+      badge: "Terhubung • Live Spreadsheet",
+      url: L.sheetUrl,
+      embedUrl: L.sheetEmbed,
+      height: 540,
+      openLabel: "Buka Sheet",
+      iframeId: "kasSheetFrame",
+      configKey: "kas",
+      placeholderHint: "Tempat ini disiapkan untuk menampilkan Google Spreadsheet Kas Kelompok secara langsung."
+    })}
+
+    ${renderModulePanel({
+      sec: "looker-kas",
+      title: "3. Visualisasi Data Looker Studio",
+      badge: "Looker Studio",
+      url: L.lookerUrl,
+      embedUrl: L.lookerEmbed,
+      height: 620,
+      openLabel: "Buka Fullscreen",
+      iframeId: "kasLookerFrame",
+      configKey: "kas",
+      placeholderHint: "Tempat ini disiapkan untuk menampilkan Dashboard Visualisasi Data Looker Studio Kas Kelompok."
+    })}
+
+    <div class="sec-head">
+      <div>
+        <h2>Tingkat Kepuasan Kelompok</h2>
+        <p>Formulir penilaian kepuasan kelompok beserta sajian data langsung dari Google Spreadsheet</p>
+      </div>
+    </div>
+
+    ${renderModulePanel({
+      sec: "form-kepuasan",
+      title: "4. Google Form Tingkat Kepuasan Kelompok",
+      badge: "Terhubung • Google Form",
+      url: L.formKepUrl,
+      embedUrl: L.formKepEmbed,
+      height: 620,
+      openLabel: "Buka Form Kepuasan",
+      iframeId: "kasKepFormFrame",
+      configKey: "kas",
+      placeholderHint: ""
+    })}
+
+    ${renderModulePanel({
+      sec: "sheet-kepuasan",
+      title: "5. Data Spreadsheet Tingkat Kepuasan Kelompok (Live)",
+      badge: "Terhubung • Live Spreadsheet",
+      url: L.sheetKepUrl,
+      embedUrl: L.sheetKepEmbed,
+      height: 560,
+      openLabel: "Buka Sheet Kepuasan",
+      iframeId: "kasKepSheetFrame",
+      configKey: "kas",
+      placeholderHint: ""
+    })}`;
+}
+
+/* ================= 2. MODUL IURAN & TABUNGAN KELOMPOK ================= */
+function renderIuran(h){
+  const L = CONFIG.links.iuran;
+  return `
+    <section class="mod-banner">
+      <span class="mod-tag">${esc(CONFIG.regulasi)} • Iuran Kelompok</span>
+      <h1>${esc(h.judul)}</h1>
+      <p>${esc(h.desc)}</p>
+      <div class="aksi">
+        ${L.formUrl ? `<a href="${esc(L.formUrl)}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Buka Google Form Iuran &#8599;</a>` : ""}
+        ${L.sheetUrl ? `<a href="${esc(L.sheetUrl)}" target="_blank" rel="noopener noreferrer" class="btn btn-outline">Buka Spreadsheet Iuran &#8599;</a>` : ""}
+        <a href="${esc(L.formKepUrl)}" target="_blank" rel="noopener noreferrer" class="btn btn-sky">Isi GForm Tingkat Kepuasan &#8599;</a>
+        <a href="${esc(L.sheetKepUrl)}" target="_blank" rel="noopener noreferrer" class="btn btn-outline">Buka Spreadsheet Kepuasan &#8599;</a>
+      </div>
+    </section>
+
+    <div class="view-tabs">
+      <button type="button" class="vtab active" data-mode="all">Tampilan Lengkap</button>
+      <button type="button" class="vtab" data-mode="form-iuran">GForm Iuran</button>
+      <button type="button" class="vtab" data-mode="sheet-iuran">Spreadsheet Iuran</button>
+      <button type="button" class="vtab" data-mode="looker-iuran">Looker Studio</button>
+      <button type="button" class="vtab" data-mode="form-kepuasan">GForm Kepuasan</button>
+      <button type="button" class="vtab" data-mode="sheet-kepuasan">Spreadsheet Kepuasan</button>
+    </div>
+
+    ${renderModulePanel({
+      sec: "form-iuran",
+      title: "1. Google Form Iuran & Tabungan Kelompok",
+      badge: "Terhubung • Google Form",
+      url: L.formUrl,
+      embedUrl: L.formEmbed,
+      height: 580,
+      openLabel: "Buka Form",
+      iframeId: "iuranFormFrame",
+      configKey: "iuran",
+      placeholderHint: "Tempat ini disiapkan untuk menampilkan Google Form Iuran & Tabungan Kelompok secara langsung."
+    })}
+
+    ${renderModulePanel({
+      sec: "sheet-iuran",
+      title: "2. Spreadsheet Iuran & Tabungan Kelompok (Live)",
+      badge: "Terhubung • Live Spreadsheet",
+      url: L.sheetUrl,
+      embedUrl: L.sheetEmbed,
+      height: 540,
+      openLabel: "Buka Sheet",
+      iframeId: "iuranSheetFrame",
+      configKey: "iuran",
+      placeholderHint: "Tempat ini disiapkan untuk menampilkan Google Spreadsheet Iuran & Tabungan Kelompok secara langsung."
+    })}
+
+    ${renderModulePanel({
+      sec: "looker-iuran",
+      title: "3. Visualisasi Data Looker Studio",
+      badge: "Looker Studio",
+      url: L.lookerUrl,
+      embedUrl: L.lookerEmbed,
+      height: 620,
+      openLabel: "Buka Fullscreen",
+      iframeId: "iuranLookerFrame",
+      configKey: "iuran",
+      placeholderHint: "Tempat ini disiapkan untuk menampilkan Dashboard Visualisasi Data Looker Studio Iuran & Tabungan Kelompok."
+    })}
+
+    <div class="sec-head">
+      <div>
+        <h2>Tingkat Kepuasan Kelompok</h2>
+        <p>Formulir penilaian kepuasan kelompok beserta sajian data langsung dari Google Spreadsheet</p>
+      </div>
+    </div>
+
+    ${renderModulePanel({
+      sec: "form-kepuasan",
+      title: "4. Google Form Tingkat Kepuasan Kelompok",
+      badge: "Terhubung • Google Form",
+      url: L.formKepUrl,
+      embedUrl: L.formKepEmbed,
+      height: 620,
+      openLabel: "Buka Form Kepuasan",
+      iframeId: "iuranKepFormFrame",
+      configKey: "iuran",
+      placeholderHint: ""
+    })}
+
+    ${renderModulePanel({
+      sec: "sheet-kepuasan",
+      title: "5. Data Spreadsheet Tingkat Kepuasan Kelompok (Live)",
+      badge: "Terhubung • Live Spreadsheet",
+      url: L.sheetKepUrl,
+      embedUrl: L.sheetKepEmbed,
+      height: 560,
+      openLabel: "Buka Sheet Kepuasan",
+      iframeId: "iuranKepSheetFrame",
+      configKey: "iuran",
+      placeholderHint: ""
+    })}`;
+}
+
+/* ================= 3. MODUL SIMPAN PINJAM ANGGOTA ================= */
+function renderSimpanPinjam(h){
+  const L = CONFIG.links.pinjam;
+  return `
+    <section class="mod-banner">
+      <span class="mod-tag">${esc(CONFIG.regulasi)} • Simpan Pinjam</span>
+      <h1>${esc(h.judul)}</h1>
+      <p>${esc(h.desc)}</p>
+      <div class="aksi">
+        ${L.formUrl ? `<a href="${esc(L.formUrl)}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Buka Google Form Simpan Pinjam &#8599;</a>` : ""}
+        ${L.sheetUrl ? `<a href="${esc(L.sheetUrl)}" target="_blank" rel="noopener noreferrer" class="btn btn-outline">Buka Spreadsheet Simpan Pinjam &#8599;</a>` : ""}
+        <a href="${esc(L.formKepUrl)}" target="_blank" rel="noopener noreferrer" class="btn btn-sky">Isi GForm Tingkat Kepuasan &#8599;</a>
+        <a href="${esc(L.sheetKepUrl)}" target="_blank" rel="noopener noreferrer" class="btn btn-outline">Buka Spreadsheet Kepuasan &#8599;</a>
+      </div>
+    </section>
+
+    <div class="view-tabs">
+      <button type="button" class="vtab active" data-mode="all">Tampilan Lengkap</button>
+      <button type="button" class="vtab" data-mode="form-pinjam">GForm Simpan Pinjam</button>
+      <button type="button" class="vtab" data-mode="sheet-pinjam">Spreadsheet Simpan Pinjam</button>
+      <button type="button" class="vtab" data-mode="looker-pinjam">Looker Studio</button>
+      <button type="button" class="vtab" data-mode="form-kepuasan">GForm Kepuasan</button>
+      <button type="button" class="vtab" data-mode="sheet-kepuasan">Spreadsheet Kepuasan</button>
+    </div>
+
+    ${renderModulePanel({
+      sec: "form-pinjam",
+      title: "1. Google Form Simpan Pinjam Anggota",
+      badge: "Terhubung • Google Form",
+      url: L.formUrl,
+      embedUrl: L.formEmbed,
+      height: 580,
+      openLabel: "Buka Form",
+      iframeId: "pinjamFormFrame",
+      configKey: "pinjam",
+      placeholderHint: "Tempat ini disiapkan untuk menampilkan Google Form Simpan Pinjam Anggota secara langsung."
+    })}
+
+    ${renderModulePanel({
+      sec: "sheet-pinjam",
+      title: "2. Spreadsheet Simpan Pinjam Anggota (Live)",
+      badge: "Terhubung • Live Spreadsheet",
+      url: L.sheetUrl,
+      embedUrl: L.sheetEmbed,
+      height: 540,
+      openLabel: "Buka Sheet",
+      iframeId: "pinjamSheetFrame",
+      configKey: "pinjam",
+      placeholderHint: "Tempat ini disiapkan untuk menampilkan Google Spreadsheet Simpan Pinjam Anggota secara langsung."
+    })}
+
+    ${renderModulePanel({
+      sec: "looker-pinjam",
+      title: "3. Visualisasi Data Looker Studio",
+      badge: "Looker Studio",
+      url: L.lookerUrl,
+      embedUrl: L.lookerEmbed,
+      height: 620,
+      openLabel: "Buka Fullscreen",
+      iframeId: "pinjamLookerFrame",
+      configKey: "pinjam",
+      placeholderHint: "Tempat ini disiapkan untuk menampilkan Dashboard Visualisasi Data Looker Studio Simpan Pinjam Anggota."
+    })}
+
+    <div class="sec-head">
+      <div>
+        <h2>Tingkat Kepuasan Simpan Pinjam Anggota</h2>
+        <p>Formulir penilaian kepuasan anggota beserta sajian data langsung dari Google Spreadsheet</p>
+      </div>
+    </div>
+
+    ${renderModulePanel({
+      sec: "form-kepuasan",
+      title: "4. Google Form Tingkat Kepuasan Simpan Pinjam Anggota",
+      badge: "Terhubung • Google Form",
+      url: L.formKepUrl,
+      embedUrl: L.formKepEmbed,
+      height: 620,
+      openLabel: "Buka Form Kepuasan",
+      iframeId: "pinjamKepFormFrame",
+      configKey: "pinjam",
+      placeholderHint: ""
+    })}
+
+    ${renderModulePanel({
+      sec: "sheet-kepuasan",
+      title: "5. Data Spreadsheet Tingkat Kepuasan Simpan Pinjam Anggota (Live)",
+      badge: "Terhubung • Live Spreadsheet",
+      url: L.sheetKepUrl,
+      embedUrl: L.sheetKepEmbed,
+      height: 560,
+      openLabel: "Buka Sheet Kepuasan",
+      iframeId: "pinjamKepSheetFrame",
+      configKey: "pinjam",
+      placeholderHint: ""
+    })}`;
+}
+
+window.reloadFrame = id => {
+  const f = document.getElementById(id);
+  if(f) f.src = f.src;
+};
+
+function render(id){
+  const h = CONFIG.halaman.find(x => x.id === id) || CONFIG.halaman[0];
+  document.title = `${h.judul} | POKLAHSAR — Albert Clodius Vascal`;
+  document.querySelectorAll("[data-id]").forEach(a => a.dataset.id === h.id ? a.setAttribute("aria-current","page") : a.removeAttribute("aria-current"));
+  const body = h.id === "beranda" ? renderBeranda(h) : h.id === "kas-kelompok" ? renderKas(h) : h.id === "iuran-kelompok" ? renderIuran(h) : renderSimpanPinjam(h);
+  $("#app").innerHTML = body + `<footer class="footer"><span><strong>${esc(CONFIG.nama)}</strong> (${esc(CONFIG.nim)}) • Bagian POKLAHSAR</span><span>${esc(CONFIG.regulasi)}</span></footer>`;
+
+  document.querySelectorAll(".vtab").forEach(b => b.addEventListener("click", () => {
+    document.querySelectorAll(".vtab").forEach(x => x.classList.toggle("active", x===b));
+    const m = b.dataset.mode;
+    document.querySelectorAll("[data-sec]").forEach(s => s.classList.toggle("hidden", m!=="all" && s.dataset.sec!==m));
+  }));
+
+  $("#mobileDrawer").classList.remove("open");
+}
+
+function route(){ render(location.hash.slice(1) || "beranda"); }
+$("#burgerBtn").addEventListener("click", () => $("#mobileDrawer").classList.toggle("open"));
+window.addEventListener("hashchange", route);
+
+buildNav();
+route();
+</script>
+</body>
+</html>
